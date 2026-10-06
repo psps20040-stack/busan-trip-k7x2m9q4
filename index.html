@@ -181,6 +181,15 @@
   .st-title { font-weight: 900; font-size: 14.5px; overflow-wrap: anywhere; }
   .st-line { font-size: 12.5px; color: var(--muted); overflow-wrap: anywhere; margin-top: 3px; }
   .st-acts { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
+  .st-acts .chk { width: 20px; height: 20px; border-radius: 6px; }
+  .st-acts .chk:checked::after { width: 5px; height: 9px; border-width: 0 2.5px 2.5px 0; }
+  .st-acts .btn.sm { min-height: 26px; padding: 1px 8px; font-size: 11.5px; border-radius: 8px; gap: 4px; box-shadow: 0 2px 0 var(--edge); }
+  .st-acts .btn.sm .ic { width: 13px; height: 13px; }
+  .st-acts .map { font-size: 11px; padding: 2px 8px 2px 6px; border-width: 1.5px; gap: 3px; }
+  .st-acts .map .ic { width: 12px; height: 12px; }
+  .st-acts .lk { font-size: 11px; padding: 2px 8px; border-width: 1.5px; }
+  .st-acts .pill { font-size: 11px; padding: 1px 8px; }
+  .st-acts { gap: 5px; }
   .thumbs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
   .thumb { width: 54px; height: 54px; border-radius: 10px; object-fit: cover; border: 2px solid var(--edge); cursor: zoom-in; }
   .chk { appearance: none; width: 24px; height: 24px; border: 2px solid var(--edge); border-radius: 8px; background: var(--surface); display: inline-grid; place-content: center; flex: none; cursor: pointer; margin: 0; }
@@ -198,6 +207,20 @@
   .facts b { display: block; font-size: 11px; font-weight: 500; color: var(--muted); }
   .notebox { background: var(--sun-soft); border-radius: 12px; padding: 8px 12px; font-size: 13px; overflow-wrap: anywhere; }
   .notebox.empty-note { background: var(--surface-2); color: var(--muted); }
+  .lk { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 900; padding: 4px 11px; border-radius: 999px; text-decoration: none; white-space: nowrap; border: 2px solid var(--edge); color: #10303a; background: var(--surface-2); }
+  .lk.ig { background: linear-gradient(135deg, #ffd36e, #ff7aa8 55%, #b98cff); }
+  .lk.th { background: #10303a; color: #fff; }
+  .lk.web { background: var(--sky-soft); }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 5px; background: var(--surface); border: 2px solid var(--edge); border-radius: 16px; box-shadow: 0 3px 0 var(--edge); }
+  .seg-b { border: 0; background: none; border-radius: 11px; padding: 9px 0; font-size: 14.5px; font-weight: 500; color: var(--muted); }
+  .seg-b[aria-selected="true"] { background: var(--sun); color: #10303a; font-weight: 900; }
+  .seg-b .num { font-size: 12px; opacity: .8; }
+  .shop-top { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 10px; align-items: start; }
+  .item.bought h3 { text-decoration: line-through; color: var(--muted); }
+  .price { font-family: var(--num); font-weight: 700; font-size: 16px; text-align: right; white-space: nowrap; }
+  .price small { display: block; font-size: 11.5px; color: var(--muted); font-weight: 500; }
+  .shop-img { width: 100%; max-width: 220px; max-height: 180px; object-fit: cover; border-radius: 12px; border: 2px solid var(--edge); cursor: zoom-in; }
+  .item .btn.sm { min-height: 28px; padding: 1px 9px; font-size: 12px; }
   .stars { display: inline-flex; gap: 2px; }
   .star { background: none; border: 0; padding: 2px; font-size: 22px; line-height: 1; color: var(--line); }
   .star.on { color: #ffb400; }
@@ -291,7 +314,8 @@
     image: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 16-5-5-8 8"/>',
     expand: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
     grip: '<circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/>',
-    save: '<path d="M5 4h11l3 3v13H5zM8 4v5h7V4M8 20v-6h8v6"/>'
+    save: '<path d="M5 4h11l3 3v13H5zM8 4v5h7V4M8 20v-6h8v6"/>',
+    cart: '<circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/><path d="M3 4h2.2l2.3 11h11.2l2-8H6.2"/>'
   };
   function ic(n) { return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[n] + '</svg>'; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -444,21 +468,22 @@
   }
 
   /* ---------- state ---------- */
-  var SNAP = {"rates":{"CNY":4.74,"KRW":0.02366,"TWD":1},"stops":[{"day":0,"done":false,"kw":"","note":"8點半搭1962到機場","ord":0,"rsv":"booked","time":"12:00","title":"桃園起飛（7C6152）","tr":"","id":"s000"},{"day":0,"done":false,"kw":"김해국제공항","note":"","ord":1,"rsv":"none","time":"15:30","title":"抵達釜山金海機場","tr":"","id":"s001"},{"day":0,"done":false,"kw":"김해국제공항","note":"3 號出口旁；備用台幣 1000／500 面額","ord":2,"rsv":"none","time":"16:00","title":"MoneyBox 換錢、領 VBP","tr":"","id":"s002"},{"day":0,"done":false,"kw":"","note":"","ord":3,"rsv":"none","time":"16:15–17:00","title":"機場接駁","tr":"計程車，約 45–50 分","id":"s003"},{"day":0,"done":false,"kw":"호텔 호메르스 광안리","note":"15:00 起可入住","ord":4,"rsv":"none","time":"17:00","title":"Check in Hotel Homers","tr":"","id":"s004"},{"day":0,"done":false,"kw":"극동돼지국밥 광안리점","note":"暫排；點瘦肉湯飯（살코기국밥），吃半飽；Catch Table 可預約","ord":5,"rsv":"todo","time":"18:00","title":"晚餐 極東豬肉湯飯","tr":"","id":"s005"},{"day":0,"done":false,"kw":"광안리해양레포츠센터","note":"20:05 前報到","ord":6,"rsv":"none","time":"19:45","title":"走路到 Yachtholic","tr":"步行","id":"s006"},{"day":0,"done":false,"kw":"요트홀릭 광안리","note":"₩46,400／2 人；船上禁止飲食、沒有廁所","ord":7,"rsv":"booked","time":"20:30–21:30","title":"Yachtholic 遊艇","tr":"","id":"s007"},{"day":0,"done":false,"kw":"","note":"備選：83 Haechi 宵夜（最後點餐約 23:40）","ord":8,"rsv":"none","time":"21:45","title":"回飯店休息","tr":"","id":"s008"},{"day":1,"done":false,"kw":"","note":"","ord":9,"rsv":"none","time":"09:00","title":"廣安里出發","tr":"公車 1003 → 南浦洞轉乘至白淺灘","id":"s009"},{"day":1,"done":false,"kw":"흰여울문화마을","note":"","ord":10,"rsv":"none","time":"10:00–11:30","title":"白淺灘文化村","tr":"","id":"s010"},{"day":1,"done":false,"kw":"에테르 영도","note":"","ord":11,"rsv":"none","time":"11:30–12:15","title":"Aether 海景咖啡廳","tr":"","id":"s011"},{"day":1,"done":false,"kw":"","note":"候選：ARP아르프／明星一隻雞","ord":12,"rsv":"none","time":"12:15–13:30","title":"午餐（待定）","tr":"","id":"s012"},{"day":1,"done":false,"kw":"THRILL ON THE MUG","note":"","ord":13,"rsv":"none","time":"13:30–14:15","title":"THRILL ON THE MUG","tr":"","id":"s013"},{"day":1,"done":false,"kw":"청학배수지 전망대","note":"","ord":14,"rsv":"none","time":"14:15–14:45","title":"靑鶴配水池展望台","tr":"","id":"s014"},{"day":1,"done":false,"kw":"","note":"","ord":15,"rsv":"none","time":"14:45","title":"前往西面","tr":"約 25–40 分","id":"s015"},{"day":1,"done":false,"kw":"롯데백화점 부산본점","note":"","ord":16,"rsv":"none","time":"15:30–17:30","title":"西面購物","tr":"","id":"s016"},{"day":1,"done":false,"kw":"","note":"","ord":17,"rsv":"none","time":"17:30","title":"地鐵 2 號線回廣安里","tr":"約 14 分＋步行","id":"s017"},{"day":1,"done":false,"kw":"","note":"候選：이낙에산다（낙곱새）","ord":18,"rsv":"none","time":"18:30","title":"晚餐（待定，廣安里）","tr":"","id":"s018"},{"day":1,"done":false,"kw":"광안리해수욕장","note":"約 10 分鐘；僅週六演出","ord":19,"rsv":"none","time":"21:00","title":"廣安里無人機表演","tr":"","id":"s019"},{"day":2,"done":false,"kw":"부산 엑스더스카이","note":"","ord":20,"rsv":"none","time":"09:30–11:00","title":"X the SKY","tr":"","id":"s020"},{"day":2,"done":false,"kw":"해변열차 미포정거장","note":"","ord":21,"rsv":"none","time":"11:15","title":"尾浦搭海岸列車 → 松亭","tr":"單程約 30 分","id":"s021"},{"day":2,"done":false,"kw":"해운대31cm해물칼국수 송정본점","note":"週二公休；15:00–17:00 休息","ord":22,"rsv":"none","time":"12:00–13:00","title":"午餐 해운대31cm해물칼국수 송정本店","tr":"","id":"s022"},{"day":2,"done":false,"kw":"해동용궁사","note":"","ord":23,"rsv":"none","time":"13:00–14:00","title":"海東龍宮寺","tr":"","id":"s023"},{"day":2,"done":false,"kw":"스카이라인루지 부산","note":"另付約 ₩30,000–34,000／人；不去可多約 1 小時緩衝","ord":24,"rsv":"none","time":"14:00–15:15","title":"〔彈性〕Skyline Luge","tr":"","id":"s024"},{"day":2,"done":false,"kw":"","note":"","ord":25,"rsv":"none","time":"15:15","title":"步行松亭 → 靑沙浦","tr":"步行約 35–40 分","id":"s025"},{"day":2,"done":false,"kw":"청사포 다릿돌전망대","note":"","ord":26,"rsv":"none","time":"16:00–16:30","title":"青沙浦天空步道","tr":"","id":"s026"},{"day":2,"done":false,"kw":"청사포정거장 스카이캡슐","note":"已購票，落日時段","ord":27,"rsv":"booked","time":"17:00","title":"膠囊列車","tr":"","id":"s027"},{"day":2,"done":false,"kw":"미포정거장","note":"","ord":28,"rsv":"none","time":"17:30","title":"抵達尾浦站","tr":"","id":"s028"},{"day":2,"done":false,"kw":"금수복국 해운대본점","note":"河豚湯，24 小時營業","ord":29,"rsv":"none","time":"18:15","title":"晚餐 金수복국 해운대本店","tr":"","id":"s029"},{"day":2,"done":false,"kw":"스파랜드 센텀시티","note":"2 小時","ord":30,"rsv":"none","time":"19:30–21:30","title":"Spa Land Centum City","tr":"","id":"s030"},{"day":2,"done":false,"kw":"","note":"","ord":31,"rsv":"none","time":"22:00","title":"回飯店休息","tr":"","id":"s031"},{"day":3,"done":false,"kw":"","note":"","ord":32,"rsv":"none","time":"09:00","title":"出發前往甘川文化村","tr":"約 1 小時（估算）","id":"s032"},{"day":3,"done":false,"kw":"감천문화마을","note":"手翻書、小王子拍照、韓服體驗","ord":33,"rsv":"none","time":"10:00–13:00","title":"甘川文化村","tr":"","id":"s033"},{"day":3,"done":false,"kw":"","note":"候選：新巨人炸雞／隱世冷拉麵／雙胞胎豬肉湯飯","ord":34,"rsv":"none","time":"13:00","title":"午餐（待定）","tr":"","id":"s034"},{"day":3,"done":false,"kw":"송도해수욕장","note":"","ord":35,"rsv":"none","time":"14:00–14:45","title":"松島列車","tr":"單程約 30 分","id":"s035"},{"day":3,"done":false,"kw":"송도 용궁구름다리","note":"","ord":36,"rsv":"none","time":"14:45–15:15","title":"龍宮雲橋","tr":"","id":"s036"},{"day":3,"done":false,"kw":"","note":"","ord":37,"rsv":"none","time":"15:45","title":"前往南浦洞 Arte Museum","tr":"約 30 分（估算）","id":"s037"},{"day":3,"done":false,"kw":"아르떼뮤지엄 부산","note":"10:00–20:00，最後入場 19:00；平日 ₩19,000","ord":38,"rsv":"none","time":"16:15–18:00","title":"Arte Museum","tr":"","id":"s038"},{"day":3,"done":false,"kw":"P.ARK 부산","note":"與 Arte Museum 同棟","ord":39,"rsv":"none","time":"18:00–18:45","title":"P.ARK","tr":"","id":"s039"},{"day":3,"done":false,"kw":"남포동","note":"","ord":40,"rsv":"none","time":"19:00–20:30","title":"南浦市場逛街＋晚餐（待定）","tr":"","id":"s040"},{"day":3,"done":false,"kw":"","note":"","ord":41,"rsv":"none","time":"20:30","title":"之後彈性，回廣安里","tr":"","id":"s041"},{"day":4,"done":false,"kw":"","note":"","ord":42,"rsv":"none","time":"09:30","title":"早餐、整理行李","tr":"","id":"s042"},{"day":4,"done":false,"kw":"","note":"","ord":43,"rsv":"none","time":"10:30","title":"退房（11:00 前）→ 帶行李到西面","tr":"約 30–40 分","id":"s043"},{"day":4,"done":false,"kw":"서면역","note":"24 小時可用","ord":44,"rsv":"none","time":"11:15","title":"西面站置物櫃寄放行李","tr":"","id":"s044"},{"day":4,"done":false,"kw":"전포카페거리","note":"最後的伴手禮採買","ord":45,"rsv":"none","time":"11:30–13:30","title":"西面購物／田浦咖啡街＋午餐（待定）","tr":"","id":"s045"},{"day":4,"done":false,"kw":"지니어스의원 서면","note":"13:40 前抵達","ord":46,"rsv":"booked","time":"14:00–15:30","title":"Genius Clinic","tr":"","id":"s046"},{"day":4,"done":false,"kw":"","note":"可調整","ord":47,"rsv":"none","time":"15:30–18:00","title":"最後採買／休息","tr":"","id":"s047"},{"day":4,"done":false,"kw":"","note":"","ord":48,"rsv":"none","time":"18:00","title":"取回行李 → 機場","tr":"地鐵 2 號線 → 沙上 → 輕軌，約 40–50 分","id":"s048"},{"day":4,"done":false,"kw":"김해국제공항","note":"","ord":49,"rsv":"none","time":"19:00","title":"抵達金海機場","tr":"","id":"s049"},{"day":4,"done":false,"kw":"","note":"","ord":50,"rsv":"booked","time":"22:00","title":"釜山起飛（7C6153）","tr":"","id":"s050"}],"places":[{"area":"影島","hours":"","ko":"흰여울문화마을","kw":"흰여울문화마을","note":"坡道階梯多","ord":0,"prio":"want","rating":0,"review":"","status":"sched","stay":"1–1.5 小時","ticket":"免費","zh":"白淺灘文化村","id":"p000"},{"area":"海雲台","hours":"","ko":"부산 엑스더스카이","kw":"부산 엑스더스카이","note":"","ord":1,"prio":"want","rating":0,"review":"","status":"sched","stay":"1–2 小時","ticket":"約 ₩27,000","zh":"X the SKY","id":"p001"},{"area":"機張","hours":"","ko":"해동용궁사","kw":"해동용궁사","note":"","ord":2,"prio":"must","rating":0,"review":"","status":"sched","stay":"至少 1 小時","ticket":"免費","zh":"海東龍宮寺","id":"p002"},{"area":"機張","hours":"","ko":"스카이라인루지 부산","kw":"스카이라인루지 부산","note":"時間不夠就省略","ord":3,"prio":"alt","rating":0,"review":"","status":"cand","stay":"1–1.5 小時","ticket":"約 ₩30,000–34,000","zh":"Skyline Luge","id":"p003"},{"area":"甘川","hours":"","ko":"감천문화마을","kw":"감천문화마을","note":"","ord":4,"prio":"must","rating":0,"review":"","status":"sched","stay":"2–3 小時","ticket":"免費入村","zh":"甘川文化村","id":"p004"},{"area":"南浦洞","hours":"10:00–20:00（最後入場 19:00）","ko":"아르떼뮤지엄 부산","kw":"아르떼뮤지엄 부산","note":"","ord":5,"prio":"want","rating":0,"review":"","status":"sched","stay":"1.5–2 小時","ticket":"平日 ₩19,000","zh":"Arte Museum","id":"p005"},{"area":"海雲台","hours":"","ko":"스파랜드 센텀시티","kw":"스파랜드 센텀시티","note":"","ord":6,"prio":"want","rating":0,"review":"","status":"sched","stay":"2 小時","ticket":"Big5 A 組","zh":"Spa Land Centum City","id":"p006"},{"area":"海雲台","hours":"24 小時（待確認）","ko":"힐스파","kw":"힐스파 해운대","note":"候選；海景汗蒸幕","ord":7,"prio":"alt","rating":0,"review":"","status":"cand","stay":"","ticket":"Big5 藍區（B 組）","zh":"Hill Spa","id":"p007"},{"area":"","hours":"","ko":"호텔 아쿠아펠리스 사우나","kw":"호텔 아쿠아펠리스 부산","note":"在 Visit Busan Pass 名單，A／B 組尚未確認","ord":8,"prio":"alt","rating":0,"review":"","status":"cand","stay":"","ticket":"","zh":"Aqua Palace Spa & Sauna","id":"p008"}],"foods":[{"area":"廣安里","dish":"瘦肉湯飯 살코기국밥","hours":"08:00–21:00","ko":"극동돼지국밥 광안리점","kw":"극동돼지국밥 광안리점","note":"Catch Table 可預約","ord":0,"price":"₩10,000","prio":"want","rating":0,"review":"","status":"sched","zh":"極東豬肉湯飯 廣安里店","id":"f000"},{"area":"廣安里（南川洞）","dish":"章腸蝦鍋 낙곱새","hours":"11:00–20:50（最後點餐 20:20）","ko":"이낙에산다","kw":"이낙에산다 광안리","note":"活章魚清湯為總店限定（單一來源）","ord":1,"price":"₩14,000","prio":"want","rating":0,"review":"","status":"cand","zh":"이낙에산다 廣安里","id":"f001"},{"area":"廣安里（民樂）","dish":"豬頸肉／五花肉","hours":"約 16:00–00:30（最後點餐約 23:40）","ko":"83해치 광안리점","kw":"83해치 광안리점","note":"遊艇後宵夜備選；電話 0507-1312-8377","ord":2,"price":"人均約 NT$500","prio":"alt","rating":0,"review":"","status":"cand","zh":"83 Haechi 烤肉","id":"f002"},{"area":"松亭","dish":"招牌海物刀削麵","hours":"11:00–21:00（15:00–17:00 休息，週二公休）","ko":"해운대31cm해물칼국수 송정본점","kw":"해운대31cm해물칼국수 송정본점","note":"","ord":3,"price":"₩10,000","prio":"want","rating":0,"review":"","status":"sched","zh":"31cm 海物刀削麵 松亭本店","id":"f003"},{"area":"海雲台","dish":"河豚湯","hours":"24 小時","ko":"금수복국 해운대본점","kw":"금수복국 해운대본점","note":"米其林指南收錄","ord":4,"price":"₩15,000–23,000","prio":"must","rating":0,"review":"","status":"sched","zh":"金水福河豚湯 海雲台本店","id":"f004"},{"area":"海雲台（月迎路）","dish":"鮑魚粥","hours":"07:00–20:00（14:30–16:00 休息，最後點餐 19:30）","ko":"바다마루전복죽","kw":"바다마루전복죽","note":"可當 Day3 早餐；Catch Table 預約","ord":5,"price":"₩13,000 起","prio":"alt","rating":0,"review":"","status":"cand","zh":"海之丸鮑魚粥","id":"f005"},{"area":"廣安里","dish":"海鮮刀削麵","hours":"10:00–22:00","ko":"나사리식당 광안점","kw":"나사리식당 광안점","note":"靠窗位不能預約","ord":6,"price":"₩15,000","prio":"alt","rating":0,"review":"","status":"cand","zh":"羅沙里食堂 廣安店","id":"f006"}],"expenses":[{"amt":19252,"cat":"交通","cur":"TWD","name":"來回機票（7C6152／7C6153）","ord":0,"pay":"信用卡","status":"paid","tax":"done","id":"e000"},{"amt":25443,"cat":"住宿","cur":"TWD","name":"Hotel Homers 4 晚","ord":1,"pay":"信用卡","status":"paid","tax":"done","id":"e001"},{"amt":1137,"cat":"門票","cur":"TWD","name":"膠囊列車（2 人艙單程）","ord":2,"pay":"信用卡","status":"paid","tax":"done","id":"e002"},{"amt":340,"cat":"門票","cur":"CNY","name":"Big5 景點套票 ×2","ord":3,"pay":"信用卡","status":"paid","tax":"done","id":"e003"},{"amt":46400,"cat":"門票","cur":"KRW","name":"Yachtholic 遊艇（2 人）","ord":4,"pay":"信用卡","status":"paid","tax":"done","id":"e004"},{"amt":750,"cat":"交通","cur":"TWD","name":"機場 → 飯店計程車","ord":5,"pay":"現金","status":"est","tax":"done","id":"e005"},{"amt":100000,"cat":"購物","cur":"KRW","name":"購物（範例，示範未退稅）","ord":6,"pay":"LINE PAY","sample":true,"status":"est","tax":"pending","id":"e006"}],"checks":[{"cat":"證件與入境","done":false,"due":"2026-10-09","ord":0,"text":"填寫 e-Arrival Card（抵達前 72 小時內）","id":"c000"},{"cat":"證件與入境","done":true,"due":"","ord":1,"text":"確認 K-ETA 免申請（至 2026/12/31）","id":"c001"},{"cat":"預約訂位","done":true,"due":"","ord":2,"text":"Yachtholic 遊艇 10/9 20:30","id":"c002"},{"cat":"預約訂位","done":true,"due":"","ord":3,"text":"膠囊列車 10/11 17:00","id":"c003"},{"cat":"預約訂位","done":true,"due":"","ord":4,"text":"Genius Clinic 10/13 14:00","id":"c004"},{"cat":"預約訂位","done":false,"due":"2026-10-08","ord":5,"text":"預約極東豬肉湯飯（Catch Table）","id":"c005"},{"cat":"行李","done":false,"due":"2026-10-08","ord":6,"text":"購買並安裝 eSIM","id":"c006"},{"cat":"行李","done":false,"due":"2026-10-08","ord":7,"text":"備用台幣現鈔（1000／500 面額）","id":"c007"},{"cat":"金錢支付","done":false,"due":"2026-10-08","ord":8,"text":"悠遊付開通韓國跨境支付","id":"c008"},{"cat":"金錢支付","done":false,"due":"2026-10-08","ord":9,"text":"信用卡切換出國回饋模式","id":"c009"}],"phrases":[{"cat":"打招呼","ko":"안녕하세요","ord":0,"rm":"annyeonghaseyo","zh":"您好","id":"p000"},{"cat":"打招呼","ko":"감사합니다","ord":1,"rm":"gamsahamnida","zh":"謝謝","id":"p001"},{"cat":"打招呼","ko":"죄송합니다","ord":2,"rm":"joesonghamnida","zh":"對不起／不好意思","id":"p002"},{"cat":"點餐","ko":"이거 주세요","ord":3,"rm":"igeo juseyo","zh":"請給我這個","id":"p003"},{"cat":"點餐","ko":"너무 맵지 않게 해 주세요","ord":4,"rm":"neomu maepji anke hae juseyo","zh":"請不要太辣","id":"p004"},{"cat":"點餐","ko":"물 좀 주세요","ord":5,"rm":"mul jom juseyo","zh":"請給我水","id":"p005"},{"cat":"點餐","ko":"포장해 주세요","ord":6,"rm":"pojanghae juseyo","zh":"請幫我外帶","id":"p006"},{"cat":"購物","ko":"얼마예요?","ord":7,"rm":"eolmayeyo","zh":"多少錢？","id":"p007"},{"cat":"購物","ko":"카드 돼요?","ord":8,"rm":"kadeu dwaeyo","zh":"可以刷卡嗎？","id":"p008"},{"cat":"購物","ko":"계산해 주세요","ord":9,"rm":"gyesanhae juseyo","zh":"請幫我結帳","id":"p009"},{"cat":"購物","ko":"영수증 주세요","ord":10,"rm":"yeongsujeung juseyo","zh":"請給我收據","id":"p010"},{"cat":"購物","ko":"Tax Refund 가능해요?","ord":11,"rm":"Tax Refund ganeunghaeyo","zh":"可以退稅嗎？","id":"p011"},{"cat":"交通","ko":"화장실이 어디예요?","ord":12,"rm":"hwajangsiri eodiyeyo","zh":"洗手間在哪裡？","id":"p012"},{"cat":"緊急","ko":"도와주세요","ord":13,"rm":"dowajuseyo","zh":"請幫幫我","id":"p013"},{"cat":"緊急","ko":"멀미가 나요","ord":14,"rm":"meolmiga nayo","zh":"我會暈（船）","id":"p014"}]}, SNAP_AT = "2026-10-06 15:55";
+  var SNAP = {"rates":{"CNY":4.74,"KRW":0.02366,"TWD":1},"stops":[{"day":2,"done":false,"kw":"海之丸鮑魚粥","note":"","ord":0,"rsv":"none","time":"09:30","title":"早餐 海之丸鮑魚粥","tr":"","id":"imuwi17arzjs1"},{"day":0,"done":false,"kw":"","note":"8點半搭1962到機場\n桃機 第一航廈","ord":0,"rsv":"booked","time":"12:00","title":"桃園起飛（7C6152）","tr":"","id":"s000"},{"day":0,"done":false,"kw":"김해국제공항","note":"","ord":1,"rsv":"none","time":"15:30","title":"抵達釜山金海機場","tr":"","id":"s001"},{"day":2,"done":false,"kw":"부산 엑스더스카이","note":"","ord":1,"rsv":"none","time":"11:00","title":"X the SKY","tr":"","id":"s020"},{"day":0,"done":false,"kw":"김해국제공항","note":"3 號出口旁；備用台幣 1000／500 面額","ord":2,"rsv":"none","time":"16:00","title":"MoneyBox 換錢、領 VBP","tr":"","id":"s002"},{"day":2,"done":false,"kw":"해변열차 미포정거장","note":"","ord":2,"rsv":"none","time":"11:15","title":"尾浦搭海岸列車 → 松亭","tr":"單程約 30 分","id":"s021"},{"day":0,"done":false,"kw":"","note":"釜山銀行前，4號出口前會合","ord":3,"rsv":"booked","time":"16:15–17:00","title":"機場接駁","tr":"計程車，約 45–50 分","id":"s003"},{"day":2,"done":false,"kw":"해운대31cm해물칼국수 송정본점","note":"週二公休；15:00–17:00 休息","ord":3,"rsv":"none","time":"12:00–13:00","title":"午餐 해운대31cm해물칼국수 송정本店","tr":"","id":"s022"},{"day":0,"done":false,"kw":"호텔 호메르스 광안리","note":"15:00 起可入住","ord":4,"rsv":"booked","time":"17:00","title":"Check in Hotel Homers","tr":"","id":"s004"},{"day":2,"done":false,"kw":"해동용궁사","note":"","ord":4,"rsv":"none","time":"13:00–14:00","title":"海東龍宮寺","tr":"","id":"s023"},{"day":0,"done":false,"kw":"이낙에산다","note":"活章魚湯","ord":5,"rsv":"none","time":"18:00","title":"晚餐이낙에산다 廣安里","tr":"走路10分鐘","id":"imuwhxkmbv2px"},{"day":2,"done":false,"kw":"스카이라인루지 부산","note":"另付約 ₩30,000–34,000／人；不去可多約 1 小時緩衝","ord":5,"rsv":"none","time":"14:00–15:15","title":"〔彈性〕Skyline Luge","tr":"","id":"s024"},{"day":0,"done":false,"kw":"광안리해양레포츠센터","note":"20:05 前報到","ord":6,"rsv":"none","time":"19:45","title":"走路到 Yachtholic","tr":"步行","id":"s006"},{"day":2,"done":false,"kw":"","note":"","ord":6,"rsv":"none","time":"15:15","title":"步行松亭 → 靑沙浦","tr":"步行約 35–40 分","id":"s025"},{"day":0,"done":false,"kw":"요트홀릭 광안리","note":"₩46,400／2 人；船上禁止飲食、沒有廁所","ord":7,"rsv":"booked","time":"20:30–21:30","title":"Yachtholic 遊艇","tr":"","id":"s007"},{"day":2,"done":false,"kw":"청사포 다릿돌전망대","note":"","ord":7,"rsv":"none","time":"16:00–16:30","title":"青沙浦天空步道","tr":"","id":"s026"},{"day":0,"done":false,"kw":"","note":"備選：83 Haechi 宵夜（最後點餐約 23:40）","ord":8,"rsv":"none","time":"21:45","title":"回飯店休息","tr":"","id":"s008"},{"day":2,"done":false,"kw":"청사포정거장 스카이캡슐","note":"已購票，落日時段","ord":8,"rsv":"booked","time":"17:00","title":"膠囊列車","tr":"","id":"s027"},{"day":1,"done":false,"kw":"","note":"","ord":9,"rsv":"none","time":"09:00","title":"廣安里出發","tr":"公車 1003 → 南浦洞轉乘至白淺灘","id":"s009"},{"day":2,"done":false,"kw":"미포정거장","note":"","ord":9,"rsv":"none","time":"17:30","title":"抵達尾浦站","tr":"","id":"s028"},{"day":1,"done":false,"kw":"흰여울문화마을","note":"","ord":10,"rsv":"none","time":"10:00–11:30","title":"白淺灘文化村","tr":"","id":"s010"},{"day":2,"done":false,"kw":"금수복국 해운대본점","note":"河豚湯，24 小時營業","ord":10,"rsv":"none","time":"18:15","title":"晚餐 金수복국 해운대本店","tr":"","id":"s029"},{"day":1,"done":false,"kw":"에테르 영도","note":"","ord":11,"rsv":"none","time":"11:30–12:15","title":"Aether 海景咖啡廳","tr":"","id":"s011"},{"day":2,"done":false,"kw":"스파랜드 센텀시티","note":"2 小時","ord":11,"rsv":"none","time":"19:30–21:30","title":"Spa Land Centum City","tr":"","id":"s030"},{"day":1,"done":false,"kw":"","note":"候選：ARP아르프／明星一隻雞","ord":12,"rsv":"none","time":"12:15–13:30","title":"午餐（待定）","tr":"","id":"s012"},{"day":2,"done":false,"kw":"","note":"","ord":12,"rsv":"none","time":"22:00","title":"回飯店休息","tr":"","id":"s031"},{"day":1,"done":false,"kw":"THRILL ON THE MUG","note":"","ord":13,"rsv":"none","time":"13:30–14:15","title":"THRILL ON THE MUG","tr":"","id":"s013"},{"day":1,"done":false,"kw":"청학배수지 전망대","note":"","ord":14,"rsv":"none","time":"14:15–14:45","title":"靑鶴配水池展望台","tr":"","id":"s014"},{"day":1,"done":false,"kw":"","note":"","ord":15,"rsv":"none","time":"14:45","title":"前往西面","tr":"約 25–40 分","id":"s015"},{"day":1,"done":false,"kw":"롯데백화점 부산본점","note":"西面地下街可以買衣服","ord":16,"rsv":"none","time":"15:30–17:30","title":"西面購物","tr":"","id":"s016"},{"day":1,"done":false,"kw":"","note":"","ord":17,"rsv":"none","time":"17:30","title":"地鐵 2 號線回廣安里","tr":"約 14 分＋步行","id":"s017"},{"day":1,"done":false,"kw":"","note":"候選：이낙에산다（낙곱새）","ord":18,"rsv":"none","time":"18:30","title":"晚餐（待定，廣安里）","tr":"","id":"s018"},{"day":1,"done":false,"kw":"광안리해수욕장","note":"約 10 分鐘；僅週六演出","ord":19,"rsv":"none","time":"21:00","title":"廣安里無人機表演","tr":"","id":"s019"},{"day":3,"done":false,"kw":"","note":"","ord":32,"rsv":"none","time":"09:00","title":"出發前往甘川文化村","tr":"約 1 小時（估算）","id":"s032"},{"day":3,"done":false,"kw":"감천문화마을","note":"手翻書、小王子拍照、韓服體驗","ord":33,"rsv":"none","time":"10:00–13:00","title":"甘川文化村","tr":"","id":"s033"},{"day":3,"done":false,"kw":"","note":"候選：新巨人炸雞／隱世冷拉麵／雙胞胎豬肉湯飯","ord":34,"rsv":"none","time":"13:00","title":"午餐（待定）","tr":"","id":"s034"},{"day":3,"done":false,"kw":"송도해수욕장","note":"","ord":35,"rsv":"none","time":"14:00–14:45","title":"松島列車","tr":"單程約 30 分","id":"s035"},{"day":3,"done":false,"kw":"송도 용궁구름다리","note":"","ord":36,"rsv":"none","time":"14:45–15:15","title":"龍宮雲橋","tr":"","id":"s036"},{"day":3,"done":false,"kw":"","note":"","ord":37,"rsv":"none","time":"15:45","title":"前往南浦洞 Arte Museum","tr":"約 30 分（估算）","id":"s037"},{"day":3,"done":false,"kw":"아르떼뮤지엄 부산","note":"10:00–20:00，最後入場 19:00；平日 ₩19,000","ord":38,"rsv":"none","time":"16:15–18:00","title":"Arte Museum","tr":"","id":"s038"},{"day":3,"done":false,"kw":"P.ARK 부산","note":"與 Arte Museum 同棟","ord":39,"rsv":"none","time":"18:00–18:45","title":"P.ARK","tr":"","id":"s039"},{"day":3,"done":false,"kw":"남포동","note":"","ord":40,"rsv":"none","time":"19:00–20:30","title":"南浦市場逛街＋晚餐（待定）","tr":"","id":"s040"},{"day":3,"done":false,"kw":"","note":"","ord":41,"rsv":"none","time":"20:30","title":"之後彈性，回廣安里","tr":"","id":"s041"},{"day":4,"done":false,"kw":"","note":"","ord":42,"rsv":"none","time":"09:30","title":"早餐、整理行李","tr":"","id":"s042"},{"day":4,"done":false,"kw":"","note":"","ord":43,"rsv":"none","time":"10:30","title":"退房（11:00 前）→ 帶行李到西面","tr":"約 30–40 分","id":"s043"},{"day":4,"done":false,"kw":"서면역","note":"24 小時可用","ord":44,"rsv":"none","time":"11:15","title":"西面站置物櫃寄放行李","tr":"","id":"s044"},{"day":4,"done":false,"kw":"전포카페거리","note":"最後的伴手禮採買","ord":45,"rsv":"none","time":"11:30–13:30","title":"西面購物／田浦咖啡街＋午餐（待定）","tr":"","id":"s045"},{"day":4,"done":false,"kw":"지니어스의원 서면","note":"13:40 前抵達","ord":46,"rsv":"booked","time":"14:00–15:30","title":"Genius Clinic","tr":"","id":"s046"},{"day":4,"done":false,"kw":"","note":"可調整","ord":47,"rsv":"none","time":"15:30–18:00","title":"最後採買／休息","tr":"","id":"s047"},{"day":4,"done":false,"kw":"","note":"","ord":48,"rsv":"none","time":"18:00","title":"取回行李 → 機場","tr":"地鐵 2 號線 → 沙上 → 輕軌，約 40–50 分","id":"s048"},{"day":4,"done":false,"kw":"김해국제공항","note":"","ord":49,"rsv":"none","time":"19:00","title":"抵達金海機場","tr":"","id":"s049"},{"day":4,"done":false,"kw":"","note":"","ord":50,"rsv":"booked","time":"22:00","title":"釜山起飛（7C6153）","tr":"","id":"s050"}],"places":[{"area":"影島","hours":"","ko":"흰여울문화마을","kw":"흰여울문화마을","note":"坡道階梯多","ord":0,"prio":"want","rating":0,"review":"","status":"sched","stay":"1–1.5 小時","ticket":"免費","zh":"白淺灘文化村","id":"p000"},{"area":"海雲台","hours":"","ko":"부산 엑스더스카이","kw":"부산 엑스더스카이","note":"","ord":1,"prio":"want","rating":0,"review":"","status":"sched","stay":"1–2 小時","ticket":"約 ₩27,000","zh":"X the SKY","id":"p001"},{"area":"機張","hours":"","ko":"해동용궁사","kw":"해동용궁사","note":"","ord":2,"prio":"must","rating":0,"review":"","status":"sched","stay":"至少 1 小時","ticket":"免費","zh":"海東龍宮寺","id":"p002"},{"area":"機張","hours":"","ko":"스카이라인루지 부산","kw":"스카이라인루지 부산","note":"時間不夠就省略","ord":3,"prio":"alt","rating":0,"review":"","status":"cand","stay":"1–1.5 小時","ticket":"約 ₩30,000–34,000","zh":"Skyline Luge","id":"p003"},{"area":"甘川","hours":"","ko":"감천문화마을","kw":"감천문화마을","note":"","ord":4,"prio":"must","rating":0,"review":"","status":"sched","stay":"2–3 小時","ticket":"免費入村","zh":"甘川文化村","id":"p004"},{"area":"南浦洞","hours":"10:00–20:00（最後入場 19:00）","ko":"아르떼뮤지엄 부산","kw":"아르떼뮤지엄 부산","note":"","ord":5,"prio":"want","rating":0,"review":"","status":"sched","stay":"1.5–2 小時","ticket":"平日 ₩19,000","zh":"Arte Museum","id":"p005"},{"area":"海雲台","hours":"","ko":"스파랜드 센텀시티","kw":"스파랜드 센텀시티","note":"","ord":6,"prio":"want","rating":0,"review":"","status":"sched","stay":"2 小時","ticket":"Big5 A 組","zh":"Spa Land Centum City","id":"p006"},{"area":"海雲台","hours":"24 小時（待確認）","ko":"힐스파","kw":"힐스파 해운대","note":"候選；海景汗蒸幕","ord":7,"prio":"alt","rating":0,"review":"","status":"cand","stay":"","ticket":"Big5 藍區（B 組）","zh":"Hill Spa","id":"p007"},{"area":"","hours":"","ko":"호텔 아쿠아펠리스 사우나","kw":"호텔 아쿠아펠리스 부산","note":"在 Visit Busan Pass 名單，A／B 組尚未確認","ord":8,"prio":"alt","rating":0,"review":"","status":"cand","stay":"","ticket":"","zh":"Aqua Palace Spa & Sauna","id":"p008"}],"foods":[{"area":"廣安里","dish":"瘦肉湯飯 살코기국밥","hours":"08:00–21:00","ko":"극동돼지국밥 광안리점","kw":"극동돼지국밥 광안리점","note":"Catch Table 可預約","ord":0,"price":"₩10,000","prio":"want","rating":0,"review":"","status":"sched","zh":"極東豬肉湯飯 廣安里店","id":"f000"},{"area":"廣安里（南川洞）","dish":"章腸蝦鍋 낙곱새","hours":"11:00–20:50（最後點餐 20:20）","ko":"이낙에산다","kw":"이낙에산다 광안리","note":"活章魚清湯為總店限定（單一來源）","ord":1,"price":"₩14,000","prio":"want","rating":0,"review":"","status":"cand","zh":"이낙에산다 廣安里","id":"f001"},{"area":"廣安里（民樂）","dish":"豬頸肉／五花肉","hours":"約 16:00–00:30（最後點餐約 23:40）","ko":"83해치 광안리점","kw":"83해치 광안리점","note":"遊艇後宵夜備選；電話 0507-1312-8377","ord":2,"price":"人均約 NT$500","prio":"alt","rating":0,"review":"","status":"cand","zh":"83 Haechi 烤肉","id":"f002"},{"area":"松亭","dish":"招牌海物刀削麵","hours":"11:00–21:00（15:00–17:00 休息，週二公休）","ko":"해운대31cm해물칼국수 송정본점","kw":"해운대31cm해물칼국수 송정본점","note":"","ord":3,"price":"₩10,000","prio":"want","rating":0,"review":"","status":"sched","zh":"31cm 海物刀削麵 松亭本店","id":"f003"},{"area":"海雲台","dish":"河豚湯","hours":"24 小時","ko":"금수복국 해운대본점","kw":"금수복국 해운대본점","note":"米其林指南收錄","ord":4,"price":"₩15,000–23,000","prio":"must","rating":0,"review":"","status":"sched","zh":"金水福河豚湯 海雲台本店","id":"f004"},{"area":"海雲台（月迎路）","dish":"鮑魚粥","hours":"07:00–20:00（14:30–16:00 休息，最後點餐 19:30）","ko":"바다마루전복죽","kw":"바다마루전복죽","links":"https://www.instagram.com/reel/DX_38tYxyqK/?stkn=aGY2NDRiNWQ3NjVh","note":"可當 Day3 早餐；Catch Table 預約\n釜山站也有店，比較不用排隊","ord":5,"price":"₩13,000 起","prio":"alt","rating":0,"review":"","status":"cand","zh":"海之丸鮑魚粥","id":"f005"},{"area":"廣安里","dish":"海鮮刀削麵","hours":"10:00–22:00","ko":"나사리식당 광안점","kw":"나사리식당 광안점","note":"靠窗位不能預約","ord":6,"price":"₩15,000","prio":"alt","rating":0,"review":"","status":"cand","zh":"羅沙里食堂 廣安店","id":"f006"},{"area":"廣安里","dish":"活章魚湯","hours":"","ko":"이낙에산다","kw":"이낙에산다","links":"https://www.instagram.com/reel/DbuvDMtPRUy/?stkn=aXpnZ2x5dGhkNnNx","note":"","ord":1791280050308,"price":"","prio":"want","rating":0,"review":"","status":"cand","zh":"이낙에산다（廣安里總店）","id":"imuwhw4n7nlm1"}],"expenses":[{"amt":19252,"cat":"交通","cur":"TWD","name":"來回機票（7C6152／7C6153）","ord":0,"pay":"信用卡","status":"paid","tax":"done","id":"e000"},{"amt":25443,"cat":"住宿","cur":"TWD","name":"Hotel Homers 4 晚","ord":1,"pay":"信用卡","status":"paid","tax":"done","id":"e001"},{"amt":1137,"cat":"門票","cur":"TWD","name":"膠囊列車（2 人艙單程）","ord":2,"pay":"信用卡","status":"paid","tax":"done","id":"e002"},{"amt":340,"cat":"門票","cur":"CNY","name":"Big5 景點套票 ×2","ord":3,"pay":"信用卡","status":"paid","tax":"done","id":"e003"},{"amt":46400,"cat":"門票","cur":"KRW","name":"Yachtholic 遊艇（2 人）","ord":4,"pay":"信用卡","status":"paid","tax":"done","id":"e004"},{"amt":750,"cat":"交通","cur":"TWD","name":"機場 → 飯店計程車","ord":5,"pay":"現金","status":"est","tax":"done","id":"e005"},{"amt":100000,"cat":"購物","cur":"KRW","name":"購物（範例，示範未退稅）","ord":6,"pay":"LINE PAY","sample":true,"status":"est","tax":"pending","id":"e006"}],"checks":[{"cat":"證件與入境","done":false,"due":"2026-10-09","ord":0,"text":"填寫 e-Arrival Card（抵達前 72 小時內）","id":"c000"},{"cat":"證件與入境","done":true,"due":"","ord":1,"text":"確認 K-ETA 免申請（至 2026/12/31）","id":"c001"},{"cat":"預約訂位","done":true,"due":"","ord":2,"text":"Yachtholic 遊艇 10/9 20:30","id":"c002"},{"cat":"預約訂位","done":true,"due":"","ord":3,"text":"膠囊列車 10/11 17:00","id":"c003"},{"cat":"預約訂位","done":true,"due":"","ord":4,"text":"Genius Clinic 10/13 14:00","id":"c004"},{"cat":"預約訂位","done":false,"due":"2026-10-08","ord":5,"text":"預約極東豬肉湯飯（Catch Table）","id":"c005"},{"cat":"行李","done":false,"due":"2026-10-08","ord":6,"text":"購買並安裝 eSIM","id":"c006"},{"cat":"行李","done":false,"due":"2026-10-08","ord":7,"text":"備用台幣現鈔（1000／500 面額）","id":"c007"},{"cat":"金錢支付","done":false,"due":"2026-10-08","ord":8,"text":"悠遊付開通韓國跨境支付","id":"c008"},{"cat":"金錢支付","done":false,"due":"2026-10-08","ord":9,"text":"信用卡切換出國回饋模式","id":"c009"},{"cat":"明珠","done":false,"due":"","ord":1791280525163,"text":"護照","id":"imuwi6b1n6tz8"},{"cat":"明珠","done":false,"due":"","ord":1791280543959,"text":"牙膏牙刷","id":"imuwi6pjrw892"},{"cat":"明珠","done":false,"due":"","ord":1791280570034,"text":"一次性毛巾(連妹妹的都要帶)","id":"imuwi79o2ikm7"},{"cat":"明珠","done":false,"due":"","ord":1791280588618,"text":"拖鞋(兩雙，妹妹也要)","id":"imuwi7o0arqqd"},{"cat":"明珠","done":false,"due":"","ord":1791280678178,"text":"錢錢","id":"imuwi9l42gg81"},{"cat":"明珠","done":false,"due":"","ord":1791280702298,"text":"手機充電線/行動電源/插頭","id":"imuwia3q2p020"},{"cat":"明珠","done":false,"due":"","ord":1791280731242,"text":"旅平險+不便險","id":"imuwiaq22xl04"}],"phrases":[{"cat":"打招呼","ko":"안녕하세요","ord":0,"rm":"annyeonghaseyo","zh":"您好","id":"p000"},{"cat":"打招呼","ko":"감사합니다","ord":1,"rm":"gamsahamnida","zh":"謝謝","id":"p001"},{"cat":"打招呼","ko":"죄송합니다","ord":2,"rm":"joesonghamnida","zh":"對不起／不好意思","id":"p002"},{"cat":"點餐","ko":"이거 주세요","ord":3,"rm":"igeo juseyo","zh":"請給我這個","id":"p003"},{"cat":"點餐","ko":"너무 맵지 않게 해 주세요","ord":4,"rm":"neomu maepji anke hae juseyo","zh":"請不要太辣","id":"p004"},{"cat":"點餐","ko":"물 좀 주세요","ord":5,"rm":"mul jom juseyo","zh":"請給我水","id":"p005"},{"cat":"點餐","ko":"포장해 주세요","ord":6,"rm":"pojanghae juseyo","zh":"請幫我外帶","id":"p006"},{"cat":"購物","ko":"얼마예요?","ord":7,"rm":"eolmayeyo","zh":"多少錢？","id":"p007"},{"cat":"購物","ko":"카드 돼요?","ord":8,"rm":"kadeu dwaeyo","zh":"可以刷卡嗎？","id":"p008"},{"cat":"購物","ko":"계산해 주세요","ord":9,"rm":"gyesanhae juseyo","zh":"請幫我結帳","id":"p009"},{"cat":"購物","ko":"영수증 주세요","ord":10,"rm":"yeongsujeung juseyo","zh":"請給我收據","id":"p010"},{"cat":"購物","ko":"Tax Refund 가능해요?","ord":11,"rm":"Tax Refund ganeunghaeyo","zh":"可以退稅嗎？","id":"p011"},{"cat":"交通","ko":"화장실이 어디예요?","ord":12,"rm":"hwajangsiri eodiyeyo","zh":"洗手間在哪裡？","id":"p012"},{"cat":"緊急","ko":"도와주세요","ord":13,"rm":"dowajuseyo","zh":"請幫幫我","id":"p013"},{"cat":"緊急","ko":"멀미가 나요","ord":14,"rm":"meolmiga nayo","zh":"我會暈（船）","id":"p014"}],"shop":[]}, SNAP_AT = "2026-10-06 18:16";
   var UKEY = 'busan-ui-v1', LKEY = 'busan-system-proto-v3', CKEY = 'busan-cache-v1';
-  var COLS = ['stops', 'places', 'foods', 'expenses', 'checks', 'phrases'];
+  var COLS = ['stops', 'places', 'foods', 'expenses', 'checks', 'phrases', 'shop'];
   var MEM = { att: {}, inv: {} };
   function rd(k) { try { var r = localStorage.getItem(k); return r ? JSON.parse(r) : null; } catch (e) { return null; } }
   function wr(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
-  var UI0 = { tab: 'overview', day: 0, sim: 'auto', pf: 'all', ff: 'all', phc: 'all' };
+  var UI0 = { tab: 'overview', day: 0, sim: 'auto', pf: 'all', ff: 'all', phc: 'all', sub: 'spot', sh: 'all' };
   var u0 = rd(UKEY) || {};
+  if (u0.tab === 'spot' || u0.tab === 'food') { u0.sub = u0.tab; u0.tab = 'place'; }
   var PREF = u0.editPref !== false;
-  var S = { ui: Object.assign({}, UI0, u0, { edit: false, editStop: '', editNote: '' }), rates: Object.assign({}, RATES0), stops: [], places: [], foods: [], expenses: [], checks: [], phrases: [] };
+  var S = { ui: Object.assign({}, UI0, u0, { edit: false, editStop: '', editNote: '', editShop: '' }), rates: Object.assign({}, RATES0), stops: [], places: [], foods: [], expenses: [], checks: [], phrases: [], shop: [] };
   var CLOUD = null, USER = null, CANWRITE = false, READY = false, SYNC = 'loading', dirty = false;
   function dataOf() { var o = { rates: S.rates }; COLS.forEach(function (c) { o[c] = S[c]; }); return o; }
   function saveLocal() { wr(LKEY, Object.assign({ v: 3 }, dataOf())); }
   function saveCache() { wr(CKEY, dataOf()); }
-  function saveUi() { var u = Object.assign({}, S.ui, { editPref: PREF }); delete u.edit; delete u.editStop; delete u.editNote; wr(UKEY, u); }
+  function saveUi() { var u = Object.assign({}, S.ui, { editPref: PREF }); delete u.edit; delete u.editStop; delete u.editNote; delete u.editShop; wr(UKEY, u); }
   function loadInto(o) { S.rates = Object.assign({}, RATES0, o.rates || {}); COLS.forEach(function (c) { S[c] = (o[c] || []).slice(); }); }
   (function () { var c = rd(CKEY); if (c) { loadInto(c); READY = true; SYNC = 'cache'; } })();
 
@@ -490,7 +515,7 @@
   function collOf(id) { return find(S.places, id) ? 'places' : 'foods'; }
 
   var TABS = [
-    ['overview', '總覽', 'overview', 'var(--sky)'], ['route', '行程', 'route', 'var(--coral)'], ['spot', '景點', 'spot', 'var(--sun)'], ['food', '美食', 'food', 'var(--pink)'],
+    ['overview', '總覽', 'overview', 'var(--sky)'], ['route', '行程', 'route', 'var(--coral)'], ['place', '景點美食', 'spot', 'var(--sun)'], ['shop', '待買', 'cart', 'var(--pink)'],
     ['money', '費用', 'money', 'var(--mint)'], ['check', '檢查', 'check', 'var(--sky)'], ['phrase', '語句', 'chat', 'var(--coral)']
   ];
   var PRIO = { must: '必去', want: '想去', alt: '備選' };
@@ -549,6 +574,15 @@
       '<div class="full row"><button class="btn pri" type="submit">' + ic('save') + '儲存</button><button class="btn" type="button" data-act="canceledit">取消</button></div></form></li>';
   }
 
+  function placeFor(s) {
+    var best = null;
+    S.places.concat(S.foods).forEach(function (p) {
+      var hit = (p.kw && s.kw && p.kw === s.kw) || (p.zh && p.zh.length >= 3 && s.title.indexOf(p.zh) >= 0) || (p.ko && p.ko.length >= 3 && s.title.indexOf(p.ko) >= 0);
+      if (hit && (!best || (!best.links && p.links))) best = p;
+    });
+    return best;
+  }
+  function stopLinks(s) { var p = placeFor(s); return p ? linkChips(p) : ''; }
   function stopHtml(s, next, compact) {
     if (!compact && S.ui.edit && S.ui.editStop === s.id) return editStopForm(s);
     var grip = !compact && S.ui.edit;
@@ -561,7 +595,7 @@
       (s.tr ? '<div class="st-line">↳ ' + esc(s.tr) + '</div>' : '') +
       (s.note ? '<div class="st-line">' + esc(s.note) + '</div>' : '') +
       (th ? '<div class="thumbs">' + th + '</div>' : '') +
-      '<div class="st-acts">' + rsvPill(s.rsv) + mapLink(s.kw) +
+      '<div class="st-acts">' + rsvPill(s.rsv) + mapLink(s.kw) + stopLinks(s) +
       (compact ? '' :
         '<button class="btn sm edit-only" type="button" data-act="editstop" data-id="' + s.id + '">' + ic('edit') + '編輯</button>' +
         '<label class="btn sm edit-only" for="att-' + s.id + '">' + ic('image') + '附件</label><input type="file" accept="image/*" id="att-' + s.id + '" data-ch="att" data-id="' + s.id + '" hidden>' +
@@ -609,7 +643,8 @@
       '<div class="stat"><div class="l">預估</div><div class="v">' + nt(sm.est) + '</div></div>' +
       '<div class="stat"><div class="l">未退稅</div><div class="v">' + nt(sm.unref) + '</div></div>' +
       '<div class="stat"><div class="l">檢查事項</div><div class="v">' + cDone + ' / ' + S.checks.length + '</div></div>' +
-      '<div class="stat"><div class="l">必去未排入</div><div class="v">' + mustLeft + ' 項</div></div></div></section>' +
+      '<div class="stat"><div class="l">必去未排入</div><div class="v">' + mustLeft + ' 項</div></div>' +
+      '<div class="stat"><div class="l">待買</div><div class="v">' + S.shop.filter(function (x) { return !x.bought; }).length + ' 項</div></div></div></section>' +
 
       syncFoot();
   }
@@ -619,14 +654,7 @@
     var stops = dayStops(d);
     var nextId = (stops.find(function (s) { return !s.done; }) || {}).id;
     var pool = S.places.concat(S.foods).filter(function (p) { return p.status === 'cand'; });
-    return '<div class="chips" role="group" aria-label="選擇日期">' + DAYS.map(function (x, i) {
-      return '<button class="chip dc' + i + '" type="button" data-act="day" data-i="' + i + '" aria-pressed="' + (i === d) + '">' + x.label + '（' + x.wd + '）</button>';
-    }).join('') + '</div>' +
-      '<div class="day-head"><h2>' + DAYS[d].label + ' · ' + esc(DAYS[d].title) + '</h2><span class="small muted">' + stops.length + ' 個停靠點</span></div>' +
-      '<div class="row edit-only"><span class="hint-drag">按住左邊的 ⋮⋮ 拖拉換順序（鍵盤可用上下鍵），時間不會自動改變</span>' +
-      '<button class="btn sm" type="button" data-act="sorttime">依時間排序</button></div>' +
-      '<ul class="stops" id="stopList">' + stops.map(function (s) { return stopHtml(s, s.id === nextId, false); }).join('') + '</ul>' +
-      '<details class="add edit-only"><summary>' + ic('plus') + '新增停靠點</summary>' +
+    var add = '<details class="add edit-only"><summary>' + ic('plus') + '新增停靠點</summary>' +
       '<form class="f" data-form="stop">' +
       '<label class="fl">時間<input type="text" name="time" placeholder="例：14:30 或 14:30–15:30" required></label>' +
       '<label class="fl">地點／事項<input type="text" name="title" required></label>' +
@@ -640,6 +668,14 @@
       (pool.length ? pool.map(function (p) { return '<option value="' + p.id + '">' + esc(p.zh) + '</option>'; }).join('') : '<option value="">候選池是空的</option>') +
       '</select></label><label class="fl">時間<input type="text" name="time" placeholder="例：15:00" required></label>' +
       '<div class="row" style="align-self:end"><button class="btn" type="submit"' + (pool.length ? '' : ' disabled') + '>' + ic('save') + '儲存</button></div></form></details>';
+    return '<div class="chips" role="group" aria-label="選擇日期">' + DAYS.map(function (x, i) {
+      return '<button class="chip dc' + i + '" type="button" data-act="day" data-i="' + i + '" aria-pressed="' + (i === d) + '">' + x.label + '（' + x.wd + '）</button>';
+    }).join('') + '</div>' +
+      add +
+      '<div class="day-head"><h2>' + DAYS[d].label + ' · ' + esc(DAYS[d].title) + '</h2><span class="small muted">' + stops.length + ' 個停靠點</span></div>' +
+      '<div class="row edit-only"><span class="hint-drag">按住左邊的 ⋮⋮ 拖拉換順序（鍵盤可用上下鍵），時間不會自動改變</span>' +
+      '<button class="btn sm" type="button" data-act="sorttime">依時間排序</button></div>' +
+      '<ul class="stops" id="stopList">' + stops.map(function (s) { return stopHtml(s, s.id === nextId, false); }).join('') + '</ul>';
   }
 
   function stars(p) {
@@ -648,6 +684,14 @@
     return h + '</span>';
   }
 
+  function linkChips(p) {
+    return String(p.links || '').split(/\s*\n\s*/).map(function (u) { return u.trim(); }).filter(function (u) { return /^https?:\/\/[^\s<>"']+$/i.test(u); }).map(function (u) {
+      var host = ''; try { host = new URL(u).hostname.replace(/^www\./, ''); } catch (e) {}
+      var cls = /(^|\.)instagram\.com$/.test(host) ? 'ig' : /(^|\.)threads\.(net|com)$/.test(host) ? 'th' : 'web';
+      var label = cls === 'ig' ? 'Instagram' : cls === 'th' ? 'Threads' : '網頁連結';
+      return '<a class="lk ' + cls + '" href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + label + ' ↗</a>';
+    }).join('');
+  }
   function listItem(p, kind) {
     var isFood = kind === 'food';
     var facts = [['區域', p.area], ['營業時間', p.hours]];
@@ -657,14 +701,14 @@
     var stCls = p.status === 'done' ? 'ok' : p.status === 'sched' ? 'pri' : p.status === 'drop' ? '' : 'pink';
     var editing = S.ui.edit && S.ui.editNote === p.id;
     var noteHtml = editing ?
-      '<div><textarea id="nt-' + p.id + '" aria-label="備註">' + esc(p.note) + '</textarea><div class="row" style="margin-top:8px"><button class="btn sm pri" type="button" data-act="savenote" data-kind="' + kind + '" data-id="' + p.id + '">' + ic('save') + '儲存備註</button><button class="btn sm" type="button" data-act="canceledit">取消</button></div></div>' :
+      '<div class="stack" style="gap:8px"><label class="fl">備註<textarea id="nt-' + p.id + '" aria-label="備註">' + esc(p.note) + '</textarea></label><label class="fl">連結（Instagram、Threads 或網頁，一行一個）<textarea id="lk-' + p.id + '" aria-label="連結" placeholder="https://www.instagram.com/…" style="min-height:56px">' + esc(p.links || '') + '</textarea></label><div class="row"><button class="btn sm pri" type="button" data-act="savenote" data-kind="' + kind + '" data-id="' + p.id + '">' + ic('save') + '儲存</button><button class="btn sm" type="button" data-act="canceledit">取消</button></div></div>' :
       (p.note ? '<div class="notebox">' + esc(p.note) + '</div>' : '<div class="notebox empty-note edit-only">尚無備註</div>');
     return '<article class="card item"><div class="spread"><div><h3>' + esc(p.zh) + '</h3><div class="ko-name">' + esc(p.ko) + '</div></div>' +
       '<div class="row" style="justify-content:flex-end"><span class="pill ' + prioCls + '">' + PRIO[p.prio] + '</span><span class="pill ' + stCls + '">' + STAT[p.status] + '</span></div></div>' +
       '<div class="facts">' + facts.map(function (f) { return '<div><b>' + f[0] + '</b>' + (f[1] ? esc(f[1]) : '<span class="muted">未填</span>') + '</div>'; }).join('') + '</div>' +
       noteHtml +
-      '<div class="row">' + mapLink(p.kw) +
-      (editing ? '' : '<button class="btn sm edit-only" type="button" data-act="editnote" data-id="' + p.id + '">' + ic('edit') + '編輯備註</button>') +
+      '<div class="row">' + mapLink(p.kw) + linkChips(p) +
+      (editing ? '' : '<button class="btn sm edit-only" type="button" data-act="editnote" data-id="' + p.id + '">' + ic('edit') + '編輯備註／連結</button>') +
       '<label class="row small edit-only" style="margin-left:auto;gap:6px">狀態<select class="ctl" data-ch="pstatus" data-kind="' + kind + '" data-id="' + p.id + '" style="width:auto">' +
       Object.keys(STAT).map(function (k) { return '<option value="' + k + '"' + (k === p.status ? ' selected' : '') + '>' + STAT[k] + '</option>'; }).join('') + '</select></label>' +
       '<label class="row small edit-only" style="gap:6px">優先度<select class="ctl" data-ch="pprio" data-kind="' + kind + '" data-id="' + p.id + '" style="width:auto">' +
@@ -683,15 +727,72 @@
     var extra = isFood ?
       '<label class="fl">招牌菜<input type="text" name="dish"></label><label class="fl">價位<input type="text" name="price" placeholder="例：₩10,000"></label>' :
       '<label class="fl">門票價<input type="text" name="ticket" placeholder="例：₩19,000"></label><label class="fl">預估停留時間<input type="text" name="stay" placeholder="例：1–1.5 小時"></label>';
-    return '<div class="chips">' + chips + '</div>' +
-      (shown.length ? shown.map(function (p) { return listItem(p, kind); }).join('') : '<div class="card empty">這個狀態還沒有項目</div>') +
-      '<details class="add edit-only"><summary>' + ic('plus') + '新增' + (isFood ? '餐廳' : '景點') + '</summary><form class="f" data-form="' + kind + '">' +
+    var add = '<details class="add edit-only"><summary>' + ic('plus') + '新增' + (isFood ? '餐廳' : '景點') + '</summary><form class="f" data-form="' + kind + '">' +
       '<label class="fl">中文名稱<input type="text" name="zh" required></label><label class="fl">韓文名稱<input type="text" name="ko" required></label>' +
       '<label class="fl">搜尋關鍵字（可選，不填用韓文名稱）<input type="text" name="kw"></label><label class="fl">所在區域<input type="text" name="area"></label>' +
       '<label class="fl">營業時間、公休' + (isFood ? '、最後點餐' : '') + '<input type="text" name="hours"></label>' + extra +
       '<label class="fl">優先度<select name="prio"><option value="want">想去</option><option value="must">必去</option><option value="alt">備選</option></select></label>' +
       '<label class="fl full">備註<textarea name="note"></textarea></label>' +
+      '<label class="fl full">連結（Instagram、Threads 或網頁，一行一個）<textarea name="links" placeholder="https://www.instagram.com/…" style="min-height:56px"></textarea></label>' +
       '<div class="full row"><button class="btn pri" type="submit">' + ic('save') + '儲存到候選</button></div></form></details>';
+    return '<div class="chips">' + chips + '</div>' + add +
+      (shown.length ? shown.map(function (p) { return listItem(p, kind); }).join('') : '<div class="card empty">這個狀態還沒有項目</div>');
+  }
+
+  function vPlace() {
+    var k = S.ui.sub === 'food' ? 'food' : 'spot';
+    return '<div class="seg" role="tablist" aria-label="景點或美食">' + [['spot', '景點', S.places.length], ['food', '美食', S.foods.length]].map(function (t) {
+      return '<button class="seg-b" role="tab" type="button" data-act="sub" data-v="' + t[0] + '" aria-selected="' + (k === t[0]) + '">' + t[1] + ' <span class="num">' + t[2] + '</span></button>';
+    }).join('') + '</div>' + vList(k);
+  }
+
+  function fmtPrice(x) {
+    if (!(x.amt > 0)) return '';
+    var n = Number(x.amt).toLocaleString('en-US');
+    var main = x.cur === 'KRW' ? '₩' + n : x.cur === 'CNY' ? 'CN¥' + n : 'NT$ ' + n;
+    return '<div class="price">' + main + (x.cur !== 'TWD' ? '<small>約 ' + nt(twd(x)) + '</small>' : '') + '</div>';
+  }
+  function shopForm(x) {
+    var e = !!x, v = function (k) { return e ? esc(x[k] || '') : ''; };
+    var cur = e ? (x.cur || 'KRW') : 'KRW';
+    return '<form class="f" data-form="' + (e ? 'editshop' : 'shop') + '"' + (e ? ' data-id="' + x.id + '" style="padding:0"' : '') + '>' +
+      '<label class="fl">中文名稱<input type="text" name="zh" value="' + v('zh') + '" required></label>' +
+      '<label class="fl">韓文名稱<input type="text" name="ko" value="' + v('ko') + '"></label>' +
+      '<label class="fl">購買地方<input type="text" name="where" value="' + v('where') + '" placeholder="例：Olive Young 光復店"></label>' +
+      '<label class="fl">NAVER MAP 搜尋關鍵字<input type="text" name="kw" value="' + v('kw') + '" placeholder="韓文店名；不填就用購買地方"></label>' +
+      '<label class="fl">價格<input type="number" name="amt" inputmode="decimal" step="any" min="0" value="' + (e && x.amt ? esc(x.amt) : '') + '"></label>' +
+      '<label class="fl">幣別<select name="cur">' + ['KRW', 'TWD', 'CNY'].map(function (c) { return '<option' + (c === cur ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></label>' +
+      '<label class="fl full">網路連結（網頁、Instagram、Threads，一行一個）<textarea name="links" placeholder="https://…" style="min-height:56px">' + v('links') + '</textarea></label>' +
+      '<label class="fl full">備註<textarea name="note" style="min-height:48px">' + v('note') + '</textarea></label>' +
+      '<label class="fl full">圖片附件（選一張，會自動縮小後儲存到雲端）<input type="file" name="img" accept="image/*"></label>' +
+      (e && x.img ? '<label class="row small full"><input type="checkbox" name="rmimg" class="chk"> 移除目前的圖片</label>' : '') +
+      '<div class="full row"><button class="btn pri" type="submit">' + ic('save') + '儲存</button>' + (e ? '<button class="btn" type="button" data-act="canceledit">取消</button>' : '') + '</div></form>';
+  }
+  function shopItem(x) {
+    if (S.ui.edit && S.ui.editShop === x.id) return '<article class="card item" data-id="' + x.id + '">' + shopForm(x) + '</article>';
+    var links = linkChips(x), facts = [];
+    if (x.where) facts.push(['購買地方', x.where]);
+    return '<article class="card item' + (x.bought ? ' bought' : '') + '" data-id="' + x.id + '">' +
+      '<div class="shop-top"><input type="checkbox" class="chk ctl" data-ch="bought" data-id="' + x.id + '"' + (x.bought ? ' checked' : '') + ' aria-label="已買"><div><h3>' + esc(x.zh) + '</h3>' + (x.ko ? '<div class="ko-name">' + esc(x.ko) + '</div>' : '') + '</div>' + fmtPrice(x) + '</div>' +
+      (facts.length ? '<div class="facts">' + facts.map(function (f) { return '<div><b>' + f[0] + '</b>' + esc(f[1]) + '</div>'; }).join('') + '</div>' : '') +
+      (x.note ? '<div class="notebox">' + esc(x.note) + '</div>' : '') +
+      (x.img ? '<img class="shop-img" src="' + x.img + '" alt="' + esc(x.zh) + '的圖片" data-act="zoomimg" data-src="shop:' + x.id + '">' : '') +
+      '<div class="row">' + mapLink(x.kw || x.where || x.ko) + links +
+      '<button class="btn sm edit-only" type="button" data-act="editshop" data-id="' + x.id + '">' + ic('edit') + '編輯</button>' +
+      '<button class="btn sm ghost edit-only" type="button" data-act="delshop" data-id="' + x.id + '">刪除</button></div></article>';
+  }
+  function vShop() {
+    var f = S.ui.sh, all = S.shop;
+    var shown = all.filter(function (x) { return f === 'all' || (f === 'todo' ? !x.bought : x.bought); });
+    var todo = all.filter(function (x) { return !x.bought; });
+    var total = todo.reduce(function (m, x) { return m + (x.amt > 0 ? twd(x) : 0); }, 0);
+    var chips = [['all', '全部', all.length], ['todo', '待買', todo.length], ['done', '已買', all.length - todo.length]].map(function (t) {
+      return '<button class="chip" type="button" data-act="shfilter" data-v="' + t[0] + '" aria-pressed="' + (t[0] === f) + '">' + t[1] + ' ' + t[2] + '</button>';
+    }).join('');
+    var add = '<details class="add edit-only"><summary>' + ic('plus') + '新增待買商品</summary>' + shopForm(null) + '</details>';
+    return '<div class="chips">' + chips + '</div>' + add +
+      (todo.length ? '<section class="card"><div class="spread"><h2 style="font-size:15px;font-weight:900">待買預估合計</h2><span class="num" style="font-weight:700;font-size:20px">' + nt(total) + '</span></div><div class="small muted">只加總有填價格的待買項目，外幣依匯率換算</div></section>' : '') +
+      (shown.length ? shown.map(shopItem).join('') : '<div class="card empty">' + (all.length ? '這個狀態還沒有商品' : S.ui.edit ? '還沒有待買商品，按上面的「新增待買商品」開始記錄' : '目前沒有待買商品') + '</div>');
   }
 
   function vMoney() {
@@ -713,15 +814,7 @@
         '<div class="amt">' + nt(twd(e)) + (e.cur !== 'TWD' ? '<div class="orig">' + e.cur + ' ' + e.amt.toLocaleString('en-US') + '</div>' : '') +
         '<button class="btn sm ghost edit-only" data-act="delexp" data-id="' + e.id + '">刪除</button></div></div>';
     }).join('');
-    return '<section class="card"><div class="card-h"><h2>花費總覽</h2><span class="hint">換算成台幣</span></div><div class="stats">' +
-      '<div class="stat"><div class="l">已付</div><div class="v">' + nt(sm.paid) + '</div></div>' +
-      '<div class="stat"><div class="l">預估</div><div class="v">' + nt(sm.est) + '</div></div>' +
-      '<div class="stat"><div class="l">合計</div><div class="v">' + nt(sm.paid + sm.est) + '</div></div>' +
-      '<div class="stat"><div class="l">未退稅</div><div class="v">' + nt(sm.unref) + '</div></div></div>' +
-      '<div class="small muted" style="margin-top:10px">原幣別合計：' + esc(curTxt) + '</div></section>' +
-      '<section class="card"><div class="card-h"><h2>依類別</h2></div>' + bars(sm.cat) + '<div class="card-h" style="margin-top:16px"><h2>依付款方式</h2></div>' + bars(sm.pay) + '</section>' +
-      '<section class="card"><div class="card-h"><h2>明細</h2><span class="hint">' + S.expenses.length + ' 筆</span></div>' + list + '</section>' +
-      '<details class="add edit-only"><summary>' + ic('plus') + '新增費用</summary><form class="f" data-form="exp">' +
+    var add = '<details class="add edit-only"><summary>' + ic('plus') + '新增費用</summary><form class="f" data-form="exp">' +
       '<label class="fl full">項目<input type="text" name="name" required></label>' +
       '<label class="fl">金額<input type="number" name="amt" inputmode="decimal" step="any" min="0" required></label>' +
       '<label class="fl">幣別<select name="cur"><option>KRW</option><option>TWD</option><option>CNY</option></select></label>' +
@@ -733,7 +826,15 @@
       '<label class="fl full">發票圖片（可選）<input type="file" name="inv" accept="image/*"></label>' +
       '<div class="full row"><button class="btn pri" type="submit">' + ic('save') + '儲存</button><button class="btn" type="button" disabled title="雛型未啟用">辨識填入（正式版）</button></div></form>' +
       '<div class="small muted" style="padding:0 14px 8px">匯率（1 外幣 = ? 台幣，可手動更新）</div><div class="rates" style="padding:0 14px 14px">' +
-      ['KRW', 'CNY'].map(function (c) { return '<label class="fl">' + c + '<input type="number" step="any" min="0" class="ctl" data-ch="rate" data-c="' + c + '" value="' + S.rates[c] + '"></label>'; }).join('') + '</div></details>' +
+      ['KRW', 'CNY'].map(function (c) { return '<label class="fl">' + c + '<input type="number" step="any" min="0" class="ctl" data-ch="rate" data-c="' + c + '" value="' + S.rates[c] + '"></label>'; }).join('') + '</div></details>';
+    return add + '<section class="card"><div class="card-h"><h2>花費總覽</h2><span class="hint">換算成台幣</span></div><div class="stats">' +
+      '<div class="stat"><div class="l">已付</div><div class="v">' + nt(sm.paid) + '</div></div>' +
+      '<div class="stat"><div class="l">預估</div><div class="v">' + nt(sm.est) + '</div></div>' +
+      '<div class="stat"><div class="l">合計</div><div class="v">' + nt(sm.paid + sm.est) + '</div></div>' +
+      '<div class="stat"><div class="l">未退稅</div><div class="v">' + nt(sm.unref) + '</div></div></div>' +
+      '<div class="small muted" style="margin-top:10px">原幣別合計：' + esc(curTxt) + '</div></section>' +
+      '<section class="card"><div class="card-h"><h2>依類別</h2></div>' + bars(sm.cat) + '<div class="card-h" style="margin-top:16px"><h2>依付款方式</h2></div>' + bars(sm.pay) + '</section>' +
+      '<section class="card"><div class="card-h"><h2>明細</h2><span class="hint">' + S.expenses.length + ' 筆</span></div>' + list + '</section>' +
       '<div class="foot">雛型的發票圖片只暫存在這次開啟，重新整理後會消失；正式版才會保存。</div>';
   }
 
@@ -750,35 +851,35 @@
     var cats = [];
     S.checks.forEach(function (c) { if (cats.indexOf(c.cat) < 0) cats.push(c.cat); });
     var done = S.checks.filter(function (c) { return c.done; }).length;
-    return '<section class="card"><div class="spread"><h2 style="font-size:16px;font-weight:900">完成進度</h2><span class="num" style="font-weight:700;font-size:20px">' + done + ' / ' + S.checks.length + '</span></div></section>' +
+    var add = '<details class="add edit-only"><summary>' + ic('plus') + '新增檢查事項</summary><form class="f" data-form="ck">' +
+      '<label class="fl full">事項<input type="text" name="text" required></label>' +
+      '<label class="fl">類別<input type="text" name="cat" list="catlist" value="預約訂位" required><datalist id="catlist">' + cats.map(function (c) { return '<option value="' + esc(c) + '">'; }).join('') + '</datalist></label>' +
+      '<label class="fl">截止日期（可不填）<input type="text" name="due" placeholder="2026-10-08"></label>' +
+      '<div class="full row"><button class="btn pri" type="submit">' + ic('save') + '儲存</button></div></form></details>';
+    return add + '<section class="card"><div class="spread"><h2 style="font-size:16px;font-weight:900">完成進度</h2><span class="num" style="font-weight:700;font-size:20px">' + done + ' / ' + S.checks.length + '</span></div></section>' +
       cats.map(function (cat) {
         return '<section class="card"><div class="card-h"><h2>' + esc(cat) + '</h2></div>' +
           S.checks.filter(function (c) { return c.cat === cat; }).sort(function (a, b) { return (a.done - b.done) || (a.due || '9').localeCompare(b.due || '9'); }).map(function (c) {
             return '<div class="ck' + (c.done ? ' done' : '') + '"><input type="checkbox" class="chk ctl" data-ch="ck" data-id="' + c.id + '"' + (c.done ? ' checked' : '') + ' aria-label="完成"><div class="ck-t">' + esc(c.text) + '</div><div>' + dueInfo(c) + '</div></div>';
           }).join('') + '</section>';
-      }).join('') +
-      '<details class="add edit-only"><summary>' + ic('plus') + '新增檢查事項</summary><form class="f" data-form="ck">' +
-      '<label class="fl full">事項<input type="text" name="text" required></label>' +
-      '<label class="fl">類別<input type="text" name="cat" list="catlist" value="預約訂位" required><datalist id="catlist">' + cats.map(function (c) { return '<option value="' + esc(c) + '">'; }).join('') + '</datalist></label>' +
-      '<label class="fl">截止日期（可不填）<input type="text" name="due" placeholder="2026-10-08"></label>' +
-      '<div class="full row"><button class="btn pri" type="submit">' + ic('save') + '儲存</button></div></form></details>';
+      }).join('');
   }
 
   function vPhrase() {
     var cats = ['all'];
     S.phrases.forEach(function (p) { if (cats.indexOf(p.cat) < 0) cats.push(p.cat); });
     var f = S.ui.phc;
-    return '<div class="chips">' + cats.map(function (c) { return '<button class="chip" type="button" data-act="phcat" data-v="' + esc(c) + '" aria-pressed="' + (c === f) + '">' + (c === 'all' ? '全部' : esc(c)) + '</button>'; }).join('') + '</div>' +
+    var add = '<details class="add edit-only"><summary>' + ic('plus') + '新增語句</summary><form class="f" data-form="ph">' +
+      '<label class="fl">中文<input type="text" name="zh" required></label><label class="fl">韓文（會用來朗讀）<input type="text" name="ko" required></label>' +
+      '<label class="fl">羅馬拼音（可不填）<input type="text" name="rm"></label>' +
+      '<label class="fl">分類<input type="text" name="cat" value="點餐" required></label>' +
+      '<div class="full row"><button class="btn pri" type="submit">' + ic('save') + '儲存</button></div></form></details>';
+    return '<div class="chips">' + cats.map(function (c) { return '<button class="chip" type="button" data-act="phcat" data-v="' + esc(c) + '" aria-pressed="' + (c === f) + '">' + (c === 'all' ? '全部' : esc(c)) + '</button>'; }).join('') + '</div>' + add +
       S.phrases.filter(function (p) { return f === 'all' || p.cat === f; }).map(function (p) {
         return '<section class="card ph"><div><div class="zh muted">' + esc(p.zh) + '</div><div class="kr">' + esc(p.ko) + '</div>' + (p.rm ? '<div class="rm">' + esc(p.rm) + '</div>' : '') +
           '<div class="row" style="margin-top:8px"><button class="btn sm" data-act="zoomph" data-id="' + p.id + '">' + ic('expand') + '放大給對方看</button><button class="btn sm ghost edit-only" data-act="delph" data-id="' + p.id + '">刪除</button></div></div>' +
           '<button class="spk" type="button" data-act="speak" data-id="' + p.id + '" aria-label="播放韓文發音：' + esc(p.zh) + '">' + ic('speaker') + '</button></section>';
       }).join('') +
-      '<details class="add edit-only"><summary>' + ic('plus') + '新增語句</summary><form class="f" data-form="ph">' +
-      '<label class="fl">中文<input type="text" name="zh" required></label><label class="fl">韓文（會用來朗讀）<input type="text" name="ko" required></label>' +
-      '<label class="fl">羅馬拼音（可不填）<input type="text" name="rm"></label>' +
-      '<label class="fl">分類<input type="text" name="cat" value="點餐" required></label>' +
-      '<div class="full row"><button class="btn pri" type="submit">' + ic('save') + '儲存</button></div></form></details>' +
       '<div class="foot">喇叭使用手機內建的韓文語音朗讀，沒有聲音時請確認音量與靜音設定。</div>';
   }
 
@@ -803,7 +904,7 @@
     else if (SYNC === 'cloud' && COLS.every(function (c) { return !S[c].length; })) {
       v.innerHTML = '<section class="card empty">雲端資料庫目前是空的。<br>' + (CANWRITE ? '請讓 Claude 匯入範例行程，或直接在各頁簽新增資料。' : '等主人建立行程後，這裡會即時出現內容。') + '</section>' + (S.ui.tab === 'overview' ? syncFoot() : '');
     } else {
-      var fn = { overview: vOverview, route: vRoute, spot: function () { return vList('spot'); }, food: function () { return vList('food'); }, money: vMoney, check: vCheck, phrase: vPhrase }[S.ui.tab];
+      var fn = { overview: vOverview, route: vRoute, place: vPlace, shop: vShop, money: vMoney, check: vCheck, phrase: vPhrase }[S.ui.tab];
       v.innerHTML = fn();
     }
     renderTabs(); renderMode();
@@ -812,7 +913,7 @@
   function softRender() {
     var a = document.activeElement, v = $('view');
     var typing = a && v.contains(a) && a.matches('input[type=text],input[type=number],textarea');
-    var open = S.ui.edit && (S.ui.editStop || S.ui.editNote || v.querySelector('details.add[open]'));
+    var open = S.ui.edit && (S.ui.editStop || S.ui.editNote || S.ui.editShop || v.querySelector('details.add[open]'));
     if (drag || typing || open) { dirty = true; return; }
     render();
   }
@@ -832,6 +933,28 @@
   }
 
   function showOv(html) { $('ovIn').innerHTML = html + '<div><button class="btn" data-act="closeov" type="button">關閉</button></div>'; $('ov').hidden = false; }
+  function compressImg(file, cb) {
+    var fr = new FileReader();
+    fr.onerror = function () { cb(''); };
+    fr.onload = function () {
+      var im = new Image();
+      im.onerror = function () { cb(''); };
+      im.onload = function () {
+        var max = 720, q = 0.72, out = '';
+        for (var n = 0; n < 6; n++) {
+          var sc = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas');
+          c.width = Math.max(1, Math.round(im.width * sc)); c.height = Math.max(1, Math.round(im.height * sc));
+          c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+          out = c.toDataURL('image/jpeg', q);
+          if (out.length <= 170000) break;
+          q = Math.max(0.4, q - 0.1); max = Math.round(max * 0.8);
+        }
+        cb(out.length <= 220000 ? out : '');
+      };
+      im.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  }
   function readFile(file, cb) { var r = new FileReader(); r.onload = function () { cb(r.result); }; r.readAsDataURL(file); }
 
   /* ---------- drag to reorder (pointer events, transform-based so the dragged node never leaves the DOM) ---------- */
@@ -900,15 +1023,15 @@
   });
 
   /* ---------- events ---------- */
-  var EDIT_ACTS = { delstop: 1, delexp: 1, delph: 1, reset: 1, rate: 1, editstop: 1, editnote: 1, savenote: 1, sorttime: 1 };
-  var EDIT_CH = { done: 1, att: 1, pstatus: 1, pprio: 1, preview: 1, ck: 1, rate: 1 };
+  var EDIT_ACTS = { delstop: 1, delexp: 1, delph: 1, reset: 1, rate: 1, editstop: 1, editnote: 1, savenote: 1, sorttime: 1, editshop: 1, delshop: 1 };
+  var EDIT_CH = { done: 1, att: 1, pstatus: 1, pprio: 1, preview: 1, ck: 1, rate: 1, bought: 1 };
 
   document.addEventListener('click', function (e) {
     var tb = e.target.closest('[data-tab]');
-    if (tb) { S.ui.tab = tb.dataset.tab; S.ui.editStop = ''; S.ui.editNote = ''; uiCommit(); window.scrollTo(0, 0); return; }
+    if (tb) { S.ui.tab = tb.dataset.tab; S.ui.editStop = ''; S.ui.editNote = ''; S.ui.editShop = ''; uiCommit(); window.scrollTo(0, 0); return; }
     if (e.target.closest('#modeBtn')) {
       if (!CANWRITE) return;
-      PREF = !PREF; S.ui.editStop = ''; S.ui.editNote = ''; uiCommit();
+      PREF = !PREF; S.ui.editStop = ''; S.ui.editNote = ''; S.ui.editShop = ''; uiCommit();
       toast(PREF ? '編輯模式' : '預覽唯讀：同行者看到的畫面'); return;
     }
     var t = e.target.closest('[data-act]');
@@ -924,10 +1047,14 @@
     else if (a === 'delph') { del('phrases', id); }
     else if (a === 'editstop') { S.ui.editStop = id; render(); var f = document.querySelector('form[data-id="' + id + '"] input[name=time]'); if (f) f.focus(); }
     else if (a === 'editnote') { S.ui.editNote = id; render(); var ta = $('nt-' + id); if (ta) ta.focus(); }
-    else if (a === 'canceledit') { S.ui.editStop = ''; S.ui.editNote = ''; render(); }
+    else if (a === 'canceledit') { S.ui.editStop = ''; S.ui.editNote = ''; S.ui.editShop = ''; render(); }
+    else if (a === 'sub') { S.ui.sub = t.dataset.v; S.ui.editNote = ''; uiCommit(); }
+    else if (a === 'shfilter') { S.ui.sh = t.dataset.v; uiCommit(); }
+    else if (a === 'editshop') { S.ui.editShop = id; render(); var fz = document.querySelector('form[data-id="' + id + '"] input[name=zh]'); if (fz) fz.focus(); }
+    else if (a === 'delshop') { del('shop', id); }
     else if (a === 'savenote') {
-      var ta2 = $('nt-' + id);
-      if (ta2) { S.ui.editNote = ''; patch(t.dataset.kind === 'food' ? 'foods' : 'places', id, { note: ta2.value.trim() }).then(function () { render(); toast('備註已儲存'); }); }
+      var ta2 = $('nt-' + id), lk2 = $('lk-' + id);
+      if (ta2) { S.ui.editNote = ''; patch(t.dataset.kind === 'food' ? 'foods' : 'places', id, { note: ta2.value.trim(), links: lk2 ? lk2.value.trim() : '' }).then(function () { render(); toast('已儲存'); }); }
     }
     else if (a === 'sorttime') {
       var l = dayStops(S.ui.day).slice().sort(function (x, y) { return x.time.slice(0, 5).localeCompare(y.time.slice(0, 5)); });
@@ -937,7 +1064,7 @@
     else if (a === 'speak') { var ph = find(S.phrases, id); if (ph) speak(ph.ko, t); }
     else if (a === 'zoomph') { var q = find(S.phrases, id); if (q) showOv('<div class="ov-kr">' + esc(q.ko) + '</div><div class="ov-zh">' + esc(q.zh) + '</div>'); }
     else if (a === 'zoomimg') {
-      var k = t.dataset.src.split(':'), src = k[0] === 'inv' ? MEM.inv[k[1]] : (MEM.att[k[0]] || [])[Number(k[1])];
+      var k = t.dataset.src.split(':'), src = k[0] === 'inv' ? MEM.inv[k[1]] : k[0] === 'shop' ? (find(S.shop, k[1]) || {}).img : (MEM.att[k[0]] || [])[Number(k[1])];
       if (src) showOv('<img src="' + src + '" alt="附件放大">');
     }
     else if (a === 'reset' && !CLOUD) { var d0 = withOrd(seed()); loadInto(d0); MEM = { att: {}, inv: {} }; saveLocal(); render(); toast('已重設為範例資料'); }
@@ -951,6 +1078,7 @@
     if (EDIT_CH[c] && !S.ui.edit) { render(); return; }
     var id = t.dataset.id;
     if (c === 'done') patch('stops', id, { done: t.checked });
+    else if (c === 'bought') patch('shop', id, { bought: t.checked });
     else if (c === 'ck') patch('checks', id, { done: t.checked });
     else if (c === 'pstatus') patch(t.dataset.kind === 'food' ? 'foods' : 'places', id, { status: t.value });
     else if (c === 'pprio') patch(t.dataset.kind === 'food' ? 'foods' : 'places', id, { prio: t.value });
@@ -969,6 +1097,21 @@
     var k = form.dataset.form, fd = new FormData(form), g = function (n) { return (fd.get(n) || '').toString().trim(); };
     var fin = function (msg) { return function () { render(); toast(msg); }; };
     var nextOrd = function (d) { return dayStops(d).reduce(function (m, s) { return Math.max(m, s.ord || 0); }, -1) + 1; };
+    if (k === 'shop' || k === 'editshop') {
+      var base = { zh: g('zh'), ko: g('ko'), where: g('where'), kw: g('kw'), amt: parseFloat(g('amt')) || 0, cur: g('cur'), links: g('links'), note: g('note') };
+      var imgf = form.querySelector('input[name=img]').files[0], rm = form.querySelector('input[name=rmimg]');
+      var finish = function (img) {
+        if (k === 'shop') { base.id = uid(); base.bought = false; base.ord = Date.now(); if (img) base.img = img; put('shop', base).then(fin('已儲存')); }
+        else {
+          var it = find(S.shop, form.dataset.id); if (!it) return;
+          if (img) base.img = img; else if (rm && rm.checked) base.img = '';
+          S.ui.editShop = '';
+          patch('shop', it.id, base).then(fin('已儲存'));
+        }
+      };
+      if (imgf) compressImg(imgf, function (out) { if (!out) toast('圖片無法處理，已略過圖片'); finish(out); }); else finish('');
+      return;
+    }
     if (k === 'stop') {
       put('stops', { id: uid(), day: S.ui.day, time: g('time'), title: g('title'), kw: g('kw'), tr: g('tr'), rsv: g('rsv'), note: g('note'), done: false, ord: nextOrd(S.ui.day) }).then(fin('已儲存'));
     } else if (k === 'editstop') {
@@ -983,7 +1126,7 @@
       put('stops', { id: uid(), day: S.ui.day, time: g('time'), title: p.zh, kw: p.kw || p.ko, tr: '', rsv: 'none', note: p.note || '', done: false, ord: nextOrd(S.ui.day) })
         .then(function () { return patch(pc, p.id, { status: 'sched' }); }).then(fin('已排入 ' + DAYS[S.ui.day].label + '，候選池狀態改為「已排入」'));
     } else if (k === 'spot' || k === 'food') {
-      var o = { id: uid(), zh: g('zh'), ko: g('ko'), kw: g('kw') || g('ko'), area: g('area'), hours: g('hours'), prio: g('prio'), status: 'cand', rating: 0, note: g('note'), review: '', ord: Date.now() };
+      var o = { id: uid(), zh: g('zh'), ko: g('ko'), kw: g('kw') || g('ko'), area: g('area'), hours: g('hours'), prio: g('prio'), status: 'cand', rating: 0, note: g('note'), links: g('links'), review: '', ord: Date.now() };
       if (k === 'food') { o.dish = g('dish'); o.price = g('price'); } else { o.ticket = g('ticket'); o.stay = g('stay'); }
       put(k === 'food' ? 'foods' : 'places', o).then(fin('已儲存'));
     } else if (k === 'exp') {
