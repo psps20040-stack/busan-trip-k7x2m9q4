@@ -1,0 +1,1046 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="釜山行程">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#0a8aa0">
+<meta name="robots" content="noindex,nofollow">
+<title>釜山行程系統</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+KR:wght@400;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<style>*{-webkit-text-size-adjust:100%}body{margin:0}[hidden]{display:none!important}</style>
+<style>
+  /* Layout concept: phone-first, sea-blue hero with a wave edge, chunky outlined cards with hard shadows, one colour per day and per tab, 7-tab bottom bar (top bar on desktop) */
+  :root {
+    --bg: #e6f6fa;
+    --surface: #ffffff;
+    --surface-2: #f0fafc;
+    --ink: #10303a;
+    --muted: #4b6872;
+    --line: #c9e3ea;
+    --edge: #10303a;
+    --hero-bg: #0a8aa0;
+    --hero-ink: #ffffff;
+    --primary: #0a7d92;
+    --primary-ink: #ffffff;
+    --primary-soft: #d2f0f6;
+    --coral: #ff6a58;  --coral-soft: #ffe0db;
+    --sun: #ffc92e;    --sun-soft: #fff0c2;
+    --mint: #2fd39a;   --mint-soft: #d3f7e8;
+    --pink: #ff86bd;   --pink-soft: #ffdfee;
+    --sky: #4aa8ff;    --sky-soft: #d9ecff;
+    --time: #c4301d;
+    --ok: #137a54;   --ok-soft: #d3f7e8;
+    --warn: #7d4a00; --warn-soft: #fff0c2;
+    --bad: #b3261e;  --bad-soft: #ffe0db;
+    --naver: #03c75a; --naver-ink: #05230f;
+    --font: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+    --font-ko: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    --num: "Fredoka", ui-rounded, "Noto Sans TC", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b1c22; --surface: #12303a; --surface-2: #183b47; --ink: #e8f4f7; --muted: #9ab9c2; --line: #28505e; --edge: #4a8696;
+      --hero-bg: #0f4f5e; --hero-ink: #e8f4f7; --primary: #6fd0e6; --primary-ink: #08222b; --primary-soft: #1b4856;
+      --coral: #ff8576; --coral-soft: #4a2723; --sun: #ffd24d; --sun-soft: #46391a; --mint: #4fe0b0; --mint-soft: #17463a;
+      --pink: #ff9ccb; --pink-soft: #482a3b; --sky: #74bcff; --sky-soft: #1d3a56; --time: #ff9a86;
+      --ok: #6fe0b2; --ok-soft: #17463a; --warn: #ffd98a; --warn-soft: #46391a; --bad: #ff9a90; --bad-soft: #4a2723;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b1c22; --surface: #12303a; --surface-2: #183b47; --ink: #e8f4f7; --muted: #9ab9c2; --line: #28505e; --edge: #4a8696;
+    --hero-bg: #0f4f5e; --hero-ink: #e8f4f7; --primary: #6fd0e6; --primary-ink: #08222b; --primary-soft: #1b4856;
+    --coral: #ff8576; --coral-soft: #4a2723; --sun: #ffd24d; --sun-soft: #46391a; --mint: #4fe0b0; --mint-soft: #17463a;
+    --pink: #ff9ccb; --pink-soft: #482a3b; --sky: #74bcff; --sky-soft: #1d3a56; --time: #ff9a86;
+    --ok: #6fe0b2; --ok-soft: #17463a; --warn: #ffd98a; --warn-soft: #46391a; --bad: #ff9a90; --bad-soft: #4a2723;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+  .ic { width: 20px; height: 20px; flex: none; }
+  .num { font-family: var(--num); font-variant-numeric: tabular-nums; }
+  h1, h2, h3 { margin: 0; text-wrap: balance; }
+
+  .dc0 { --dc: var(--coral); --dcs: var(--coral-soft); }
+  .dc1 { --dc: var(--sun);   --dcs: var(--sun-soft); }
+  .dc2 { --dc: #35c4d9;      --dcs: var(--primary-soft); }
+  .dc3 { --dc: var(--mint);  --dcs: var(--mint-soft); }
+  .dc4 { --dc: var(--pink);  --dcs: var(--pink-soft); }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; background: var(--hero-bg); color: var(--hero-ink); padding: 18px 0 40px; overflow: hidden; }
+  .hero::before { content: ""; position: absolute; right: -18px; top: -22px; width: 92px; height: 92px; border-radius: 50%; background: var(--sun); opacity: .95; }
+  .hero::after { content: ""; position: absolute; left: 52%; top: 10px; width: 22px; height: 22px; border-radius: 50%; background: var(--coral); }
+  .hero .wave { position: absolute; left: 0; right: 0; bottom: -1px; width: 100%; height: 24px; display: block; }
+  .hero-in { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding-inline: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .hero h1 { font-family: var(--num); font-size: 32px; font-weight: 700; letter-spacing: .01em; line-height: 1.1; }
+  .hero .sub { font-size: 13px; margin-top: 4px; opacity: .92; }
+  .mode { display: inline-flex; align-items: center; gap: 6px; border: 2px solid var(--edge); background: #fff; color: #10303a; border-radius: 999px;
+    padding: 6px 13px 6px 10px; font-size: 13px; font-weight: 700; box-shadow: 0 3px 0 var(--edge); }
+  .mode[aria-pressed="true"] { background: var(--sun); }
+  .mode:disabled { opacity: .85; box-shadow: none; cursor: default; }
+  .mode:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--edge); }
+
+  /* ---------- Shell + tabs ---------- */
+  .shell { max-width: 720px; margin: 0 auto; padding-inline: 16px; padding-block: 8px 104px; }
+  .tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;
+    background: var(--surface); border-top: 2px solid var(--edge); padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px)); }
+  .tab { display: flex; flex-direction: column; align-items: center; gap: 2px; background: none; border: 0; padding: 6px 0; font-size: 11px; font-weight: 500;
+    color: var(--muted); border-radius: 12px; min-width: 0; }
+  .tab[aria-selected="true"] { background: var(--tc); color: #10303a; font-weight: 900; }
+
+  @media (min-width: 860px) {
+    .shell { max-width: 820px; padding-bottom: 48px; }
+    .hero-in { max-width: 820px; }
+    .tabs { position: sticky; top: 8px; bottom: auto; border: 2px solid var(--edge); border-radius: 18px; padding: 4px; margin-bottom: 18px; box-shadow: 0 4px 0 var(--edge); }
+    .tab { flex-direction: row; justify-content: center; gap: 6px; font-size: 13.5px; padding: 9px 0; }
+  }
+
+  /* ---------- Blocks ---------- */
+  .stack { display: flex; flex-direction: column; gap: 16px; }
+  .card { background: var(--surface); border: 2px solid var(--edge); border-radius: 20px; padding: 16px; box-shadow: 0 4px 0 var(--edge); min-width: 0; position: relative; }
+  .card::before { content: ""; position: absolute; left: 18px; top: -2px; width: 46px; height: 7px; border-radius: 0 0 7px 7px; background: var(--tabc, var(--primary)); }
+  .card-h { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 4px 0 10px; flex-wrap: wrap; }
+  .card-h h2 { font-size: 16px; font-weight: 900; }
+  .card-h .hint { font-size: 12px; color: var(--muted); }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 12px; }
+  .muted { color: var(--muted); }
+  .small { font-size: 12.5px; }
+  .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .spread { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+
+  .pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700; padding: 2px 10px; border-radius: 999px;
+    background: var(--surface-2); color: var(--ink); border: 1.5px solid var(--line); white-space: nowrap; }
+  .pill.ok { background: var(--mint-soft); color: var(--ok); border-color: transparent; }
+  .pill.warn { background: var(--sun-soft); color: var(--warn); border-color: transparent; }
+  .pill.bad { background: var(--coral-soft); color: var(--bad); border-color: transparent; }
+  .pill.pri { background: var(--sky-soft); color: var(--ink); border-color: transparent; }
+  .pill.pink { background: var(--pink-soft); color: var(--ink); border-color: transparent; }
+
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 8px; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex: none; border: 2px solid var(--edge); background: var(--surface); border-radius: 999px; padding: 6px 15px; font-size: 13px; font-weight: 500; box-shadow: 0 3px 0 var(--edge); }
+  .chip[aria-pressed="true"] { background: var(--dc, var(--sun)); font-weight: 900; color: #10303a; }
+  .chip:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--edge); }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 2px solid var(--edge); background: var(--surface);
+    border-radius: 12px; padding: 8px 14px; font-size: 13.5px; font-weight: 700; min-height: 40px; box-shadow: 0 3px 0 var(--edge); }
+  .btn.pri { background: var(--sun); color: #10303a; }
+  .btn.sm { padding: 3px 10px; min-height: 32px; font-size: 12.5px; border-radius: 10px; box-shadow: 0 2px 0 var(--edge); }
+  .btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--edge); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; box-shadow: none; }
+  .btn.ghost { border-color: transparent; background: transparent; color: var(--muted); box-shadow: none; font-weight: 500; }
+
+  .map { display: inline-flex; align-items: center; gap: 5px; background: var(--naver); color: var(--naver-ink); font-weight: 900; font-size: 12px;
+    padding: 4px 11px 4px 8px; border-radius: 999px; text-decoration: none; white-space: nowrap; border: 2px solid var(--edge); }
+  .map .ic { width: 14px; height: 14px; }
+
+  /* ---------- Forms ---------- */
+  details.add { border: 2px dashed var(--edge); border-radius: 18px; background: var(--surface); }
+  details.add > summary { list-style: none; cursor: pointer; padding: 12px 16px; font-size: 14px; font-weight: 900; display: flex; align-items: center; gap: 6px; }
+  details.add > summary::-webkit-details-marker { display: none; }
+  details.add[open] > summary { border-bottom: 2px dashed var(--edge); }
+  form.f { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 14px; }
+  form.f .full { grid-column: 1 / -1; }
+  label.fl { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 500; color: var(--muted); min-width: 0; }
+  input[type=text], input[type=number], select, textarea { width: 100%; min-width: 0; background: var(--surface-2); border: 2px solid var(--line); border-radius: 11px; padding: 8px 10px; font-size: 14px; color: var(--ink); }
+  input[type=text]:focus, input[type=number]:focus, select:focus, textarea:focus { border-color: var(--edge); outline: none; }
+  textarea { resize: vertical; min-height: 64px; }
+  input[type=file] { font-size: 12.5px; max-width: 100%; }
+
+  /* ---------- Overview ---------- */
+  .countdown { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .sticker { font-family: var(--num); font-size: 30px; font-weight: 700; line-height: 1; background: var(--sun); color: #10303a; border: 2px solid var(--edge);
+    border-radius: 16px; padding: 10px 14px; transform: rotate(-3deg); box-shadow: 0 3px 0 var(--edge); }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+  .stat { border-radius: 14px; padding: 10px 12px; border: 2px solid var(--edge); }
+  .stat:nth-child(5n+1) { background: var(--sky-soft); } .stat:nth-child(5n+2) { background: var(--sun-soft); } .stat:nth-child(5n+3) { background: var(--coral-soft); }
+  .stat:nth-child(5n+4) { background: var(--mint-soft); } .stat:nth-child(5n+5) { background: var(--pink-soft); }
+  .stat .l { font-size: 11.5px; color: var(--muted); font-weight: 500; }
+  .stat .v { font-family: var(--num); font-size: 18px; font-weight: 700; color: var(--ink); }
+
+  /* ---------- Stops ---------- */
+  .stops { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .stop { display: grid; grid-template-columns: auto 74px minmax(0, 1fr); gap: 8px; padding: 12px 12px 12px 8px; background: var(--surface); border: 2px solid var(--edge); border-radius: 16px;
+    box-shadow: 0 3px 0 var(--edge); transition: transform .16s ease; }
+  .stop.nogrip { grid-template-columns: 74px minmax(0, 1fr); padding-left: 12px; }
+  .stop.next { background: var(--dcs); }
+  .stop.done .st-title { text-decoration: line-through; color: var(--muted); }
+  .stop.dragging { transition: none; z-index: 5; position: relative; box-shadow: 0 10px 0 var(--edge); background: var(--sun-soft); }
+  .stop.editing { grid-template-columns: minmax(0, 1fr); padding: 14px; background: var(--sky-soft); }
+  .grip { width: 28px; align-self: stretch; display: grid; place-content: center; background: none; border: 0; color: var(--muted); touch-action: none; cursor: grab; border-radius: 8px; padding: 0; }
+  .grip svg { width: 18px; height: 18px; }
+  .st-time { font-family: var(--num); font-size: 12.5px; font-weight: 600; line-height: 1.3; align-self: start; background: var(--dcs, var(--sun-soft)); color: var(--ink); padding: 3px 8px; border-radius: 9px; text-align: center; border: 1.5px solid var(--dc, var(--line)); }
+  .st-title { font-weight: 900; font-size: 14.5px; overflow-wrap: anywhere; }
+  .st-line { font-size: 12.5px; color: var(--muted); overflow-wrap: anywhere; margin-top: 3px; }
+  .st-acts { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
+  .thumbs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .thumb { width: 54px; height: 54px; border-radius: 10px; object-fit: cover; border: 2px solid var(--edge); cursor: zoom-in; }
+  .chk { appearance: none; width: 24px; height: 24px; border: 2px solid var(--edge); border-radius: 8px; background: var(--surface); display: inline-grid; place-content: center; flex: none; cursor: pointer; margin: 0; }
+  .chk:checked { background: var(--mint); }
+  .chk:checked::after { content: ""; width: 6px; height: 11px; border: solid #10303a; border-width: 0 3px 3px 0; transform: rotate(45deg) translate(-1px, -1px); }
+  .day-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .day-head h2 { font-size: 18px; font-weight: 900; }
+  .hint-drag { font-size: 12px; color: var(--muted); }
+
+  /* ---------- Lists ---------- */
+  .item { display: flex; flex-direction: column; gap: 9px; }
+  .item h3 { font-size: 16px; font-weight: 900; }
+  .item .ko-name { font-family: var(--font-ko); font-size: 13px; color: var(--muted); }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 8px 14px; font-size: 12.5px; background: var(--surface-2); border-radius: 12px; padding: 10px 12px; }
+  .facts b { display: block; font-size: 11px; font-weight: 500; color: var(--muted); }
+  .notebox { background: var(--sun-soft); border-radius: 12px; padding: 8px 12px; font-size: 13px; overflow-wrap: anywhere; }
+  .notebox.empty-note { background: var(--surface-2); color: var(--muted); }
+  .stars { display: inline-flex; gap: 2px; }
+  .star { background: none; border: 0; padding: 2px; font-size: 22px; line-height: 1; color: var(--line); }
+  .star.on { color: #ffb400; }
+
+  /* ---------- Money ---------- */
+  .bar-row { display: grid; grid-template-columns: 74px minmax(0, 1fr) auto; gap: 8px; align-items: center; font-size: 12.5px; margin-top: 7px; }
+  .bar { height: 12px; border-radius: 7px; background: var(--surface-2); border: 1.5px solid var(--edge); overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--c, var(--mint)); }
+  .exp { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; padding: 12px 0; border-top: 2px dotted var(--line); }
+  .exp:first-child { border-top: 0; }
+  .exp .amt { text-align: right; font-family: var(--num); font-weight: 700; font-size: 15px; }
+  .exp .orig { font-size: 11.5px; color: var(--muted); font-weight: 400; }
+  .rates { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+
+  /* ---------- Checklist ---------- */
+  .ck { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 10px; align-items: start; padding: 10px 0; border-top: 2px dotted var(--line); }
+  .ck:first-of-type { border-top: 0; }
+  .ck.done .ck-t { color: var(--muted); text-decoration: line-through; }
+  .ck-t { font-size: 14px; overflow-wrap: anywhere; }
+
+  /* ---------- Phrases ---------- */
+  .ph { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; align-items: center; }
+  .ph .kr { font-family: var(--font-ko); font-size: 21px; font-weight: 700; overflow-wrap: anywhere; line-height: 1.35; }
+  .ph .zh { font-size: 13.5px; }
+  .ph .rm { font-size: 12px; color: var(--muted); font-style: italic; }
+  .spk { width: 54px; height: 54px; border-radius: 50%; border: 2px solid var(--edge); background: var(--pink); color: #10303a; display: grid; place-content: center; box-shadow: 0 3px 0 var(--edge); }
+  .spk .ic { width: 24px; height: 24px; }
+  .spk:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--edge); }
+  .spk.playing { background: var(--naver); }
+
+  /* ---------- Overlay + toast ---------- */
+  .ov { position: fixed; inset: 0; z-index: 50; background: rgba(8,16,20,.9); display: grid; place-items: center; padding: 20px; }
+  .ov-in { max-width: 100%; max-height: 100%; overflow: auto; text-align: center; color: #fff; }
+  .ov-in img { max-width: 100%; max-height: 80vh; border-radius: 14px; }
+  .ov-kr { font-family: var(--font-ko); font-size: clamp(34px, 11vw, 64px); font-weight: 700; line-height: 1.25; overflow-wrap: anywhere; }
+  .ov-zh { margin-top: 14px; font-size: 18px; opacity: .85; }
+  .ov .btn { margin-top: 20px; }
+  #toast { position: fixed; left: 50%; bottom: calc(92px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 60; background: var(--ink); color: var(--bg);
+    padding: 10px 18px; border-radius: 999px; font-size: 13px; font-weight: 700; max-width: calc(100% - 32px); opacity: 0; pointer-events: none; transition: opacity .2s; }
+  #toast.show { opacity: 1; }
+
+  .readonly .edit-only { display: none !important; }
+  .readonly .ctl { pointer-events: none; }
+  .empty { text-align: center; color: var(--muted); font-size: 13.5px; padding: 18px 0; }
+  .foot { font-size: 12px; color: var(--muted); text-align: center; padding: 4px 8px 0; }
+
+  @media (max-width: 420px) {
+    .stop { grid-template-columns: auto 62px minmax(0, 1fr); }
+    .stop.nogrip { grid-template-columns: 62px minmax(0, 1fr); }
+    form.f { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) { #toast, .stop { transition: none; } .sticker { transform: none; } }
+</style></head><body>
+
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <h1>釜山五日</h1>
+      <div class="sub">10/9（五）– 10/13（二）· 2 人 · 廣安里</div>
+    </div>
+    <button class="mode" id="modeBtn" type="button" aria-pressed="true"></button>
+  </div>
+  <svg class="wave" viewBox="0 0 400 24" preserveAspectRatio="none" aria-hidden="true"><path d="M0 12 Q25 0 50 12 T100 12 T150 12 T200 12 T250 12 T300 12 T350 12 T400 12 V24 H0Z" fill="var(--bg)"/></svg>
+</header>
+<div class="shell" id="shell">
+  <nav class="tabs" id="tabs" role="tablist" aria-label="主要頁簽"></nav>
+  <main id="view" class="stack"></main>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div class="ov" id="ov" hidden><div class="ov-in" id="ovIn"></div></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- helpers ---------- */
+  var ICONS = {
+    overview: '<path d="M4 13h6V4H4zM14 20h6V11h-6zM14 8h6V4h-6zM4 20h6v-3H4z"/>',
+    route: '<circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h6"/>',
+    spot: '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+    food: '<path d="M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M17 3c-2 2-3 5-3 8h3v10"/>',
+    money: '<path d="M3 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM3 7l2-3h12v3"/><circle cx="16.5" cy="13.5" r="1"/>',
+    check: '<rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8.5 12 2.5 2.5 4.5-5"/>',
+    chat: '<path d="M4 5h16v11H9l-5 4z"/>',
+    speaker: '<path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/>',
+    pin: '<path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+    lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+    edit: '<path d="M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    image: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 16-5-5-8 8"/>',
+    expand: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+    grip: '<circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/>',
+    save: '<path d="M5 4h11l3 3v13H5zM8 4v5h7V4M8 20v-6h8v6"/>'
+  };
+  function ic(n) { return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[n] + '</svg>'; }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function uid() { return 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function $(id) { return document.getElementById(id); }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function ymd(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function nt(n) { return 'NT$ ' + Math.round(n).toLocaleString('en-US'); }
+  function mapLink(kw) {
+    if (!kw) return '';
+    return '<a class="map" href="https://map.naver.com/p/search/' + encodeURIComponent(kw) + '" target="_blank" rel="noopener">' + ic('pin') + 'NAVER MAP</a>';
+  }
+  var toastT;
+  function toast(msg) { var t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('show'); }, 2400); }
+
+  /* ---------- seed data ---------- */
+  var DAYS = [
+    { iso: '2026-10-09', label: '10/9', wd: '五', title: '抵達釜山' },
+    { iso: '2026-10-10', label: '10/10', wd: '六', title: '影島文化漫遊' },
+    { iso: '2026-10-11', label: '10/11', wd: '日', title: '廣安里海岸線' },
+    { iso: '2026-10-12', label: '10/12', wd: '一', title: '甘川文化村・南浦洞' },
+    { iso: '2026-10-13', label: '10/13', wd: '二', title: '返程' }
+  ];
+  var RATES0 = { TWD: 1, KRW: 0.02366, CNY: 4.74 };
+  var CATS = ['交通', '住宿', '餐飲', '門票', '購物', '其他'];
+  var PAYS = ['現金', '信用卡', '全支付', 'LINE PAY', '其他'];
+
+  function seed() {
+    var st = function (day, time, title, o) { o = o || {}; return { id: uid(), day: day, time: time, title: title, kw: o.kw || '', tr: o.tr || '', rsv: o.rsv || 'none', note: o.note || '', done: false }; };
+    return {
+      v: 2,
+      ui: { tab: 'overview', day: 0, sim: 'auto', edit: true, pf: 'all', ff: 'all', phc: 'all', editStop: '', editNote: '' },
+      rates: RATES0,
+      stops: [
+        st(0, '12:00', '桃園起飛（7C6152）', { rsv: 'booked' }),
+        st(0, '15:30', '抵達釜山金海機場', { kw: '김해국제공항' }),
+        st(0, '16:00', 'MoneyBox 換錢、領 VBP', { kw: '김해국제공항', note: '3 號出口旁；備用台幣 1000／500 面額' }),
+        st(0, '16:15–17:00', '機場接駁', { tr: '計程車，約 45–50 分' }),
+        st(0, '17:00', 'Check in Hotel Homers', { kw: '호텔 호메르스 광안리', note: '15:00 起可入住' }),
+        st(0, '18:00', '晚餐 極東豬肉湯飯', { kw: '극동돼지국밥 광안리점', rsv: 'todo', note: '暫排；點瘦肉湯飯（살코기국밥），吃半飽；Catch Table 可預約' }),
+        st(0, '19:45', '走路到 Yachtholic', { kw: '광안리해양레포츠센터', tr: '步行', note: '20:05 前報到' }),
+        st(0, '20:30–21:30', 'Yachtholic 遊艇', { kw: '요트홀릭 광안리', rsv: 'booked', note: '₩46,400／2 人；船上禁止飲食、沒有廁所' }),
+        st(0, '21:45', '回飯店休息', { note: '備選：83 Haechi 宵夜（最後點餐約 23:40）' }),
+
+        st(1, '09:00', '廣安里出發', { tr: '公車 1003 → 南浦洞轉乘至白淺灘' }),
+        st(1, '10:00–11:30', '白淺灘文化村', { kw: '흰여울문화마을' }),
+        st(1, '11:30–12:15', 'Aether 海景咖啡廳', { kw: '에테르 영도' }),
+        st(1, '12:15–13:30', '午餐（待定）', { note: '候選：ARP아르프／明星一隻雞' }),
+        st(1, '13:30–14:15', 'THRILL ON THE MUG', { kw: 'THRILL ON THE MUG' }),
+        st(1, '14:15–14:45', '靑鶴配水池展望台', { kw: '청학배수지 전망대' }),
+        st(1, '14:45', '前往西面', { tr: '約 25–40 分' }),
+        st(1, '15:30–17:30', '西面購物', { kw: '롯데백화점 부산본점' }),
+        st(1, '17:30', '地鐵 2 號線回廣安里', { tr: '約 14 分＋步行' }),
+        st(1, '18:30', '晚餐（待定，廣安里）', { note: '候選：이낙에산다（낙곱새）' }),
+        st(1, '21:00', '廣安里無人機表演', { kw: '광안리해수욕장', note: '約 10 分鐘；僅週六演出' }),
+
+        st(2, '09:30–11:00', 'X the SKY', { kw: '부산 엑스더스카이' }),
+        st(2, '11:15', '尾浦搭海岸列車 → 松亭', { kw: '해변열차 미포정거장', tr: '單程約 30 分' }),
+        st(2, '12:00–13:00', '午餐 해운대31cm해물칼국수 송정本店', { kw: '해운대31cm해물칼국수 송정본점', note: '週二公休；15:00–17:00 休息' }),
+        st(2, '13:00–14:00', '海東龍宮寺', { kw: '해동용궁사' }),
+        st(2, '14:00–15:15', '〔彈性〕Skyline Luge', { kw: '스카이라인루지 부산', note: '另付約 ₩30,000–34,000／人；不去可多約 1 小時緩衝' }),
+        st(2, '15:15', '步行松亭 → 靑沙浦', { tr: '步行約 35–40 分' }),
+        st(2, '16:00–16:30', '青沙浦天空步道', { kw: '청사포 다릿돌전망대' }),
+        st(2, '17:00', '膠囊列車', { kw: '청사포정거장 스카이캡슐', rsv: 'booked', note: '已購票，落日時段' }),
+        st(2, '17:30', '抵達尾浦站', { kw: '미포정거장' }),
+        st(2, '18:15', '晚餐 金수복국 해운대本店', { kw: '금수복국 해운대본점', note: '河豚湯，24 小時營業' }),
+        st(2, '19:30–21:30', 'Spa Land Centum City', { kw: '스파랜드 센텀시티', note: '2 小時' }),
+        st(2, '22:00', '回飯店休息'),
+
+        st(3, '09:00', '出發前往甘川文化村', { tr: '約 1 小時（估算）' }),
+        st(3, '10:00–13:00', '甘川文化村', { kw: '감천문화마을', note: '手翻書、小王子拍照、韓服體驗' }),
+        st(3, '13:00', '午餐（待定）', { note: '候選：新巨人炸雞／隱世冷拉麵／雙胞胎豬肉湯飯' }),
+        st(3, '14:00–14:45', '松島列車', { kw: '송도해수욕장', tr: '單程約 30 分' }),
+        st(3, '14:45–15:15', '龍宮雲橋', { kw: '송도 용궁구름다리' }),
+        st(3, '15:45', '前往南浦洞 Arte Museum', { tr: '約 30 分（估算）' }),
+        st(3, '16:15–18:00', 'Arte Museum', { kw: '아르떼뮤지엄 부산', note: '10:00–20:00，最後入場 19:00；平日 ₩19,000' }),
+        st(3, '18:00–18:45', 'P.ARK', { kw: 'P.ARK 부산', note: '與 Arte Museum 同棟' }),
+        st(3, '19:00–20:30', '南浦市場逛街＋晚餐（待定）', { kw: '남포동' }),
+        st(3, '20:30', '之後彈性，回廣安里'),
+
+        st(4, '09:30', '早餐、整理行李'),
+        st(4, '10:30', '退房（11:00 前）→ 帶行李到西面', { tr: '約 30–40 分' }),
+        st(4, '11:15', '西面站置物櫃寄放行李', { kw: '서면역', note: '24 小時可用' }),
+        st(4, '11:30–13:30', '西面購物／田浦咖啡街＋午餐（待定）', { kw: '전포카페거리', note: '最後的伴手禮採買' }),
+        st(4, '14:00–15:30', 'Genius Clinic', { kw: '지니어스의원 서면', rsv: 'booked', note: '13:40 前抵達' }),
+        st(4, '15:30–18:00', '最後採買／休息', { note: '可調整' }),
+        st(4, '18:00', '取回行李 → 機場', { tr: '地鐵 2 號線 → 沙上 → 輕軌，約 40–50 分' }),
+        st(4, '19:00', '抵達金海機場', { kw: '김해국제공항' }),
+        st(4, '22:00', '釜山起飛（7C6153）', { rsv: 'booked' })
+      ],
+      places: [
+        { id: uid(), zh: '白淺灘文化村', ko: '흰여울문화마을', kw: '흰여울문화마을', area: '影島', hours: '', ticket: '免費', stay: '1–1.5 小時', prio: 'want', status: 'sched', rating: 0, note: '坡道階梯多', review: '' },
+        { id: uid(), zh: 'X the SKY', ko: '부산 엑스더스카이', kw: '부산 엑스더스카이', area: '海雲台', hours: '', ticket: '約 ₩27,000', stay: '1–2 小時', prio: 'want', status: 'sched', rating: 0, note: '', review: '' },
+        { id: uid(), zh: '海東龍宮寺', ko: '해동용궁사', kw: '해동용궁사', area: '機張', hours: '', ticket: '免費', stay: '至少 1 小時', prio: 'must', status: 'sched', rating: 0, note: '', review: '' },
+        { id: uid(), zh: 'Skyline Luge', ko: '스카이라인루지 부산', kw: '스카이라인루지 부산', area: '機張', hours: '', ticket: '約 ₩30,000–34,000', stay: '1–1.5 小時', prio: 'alt', status: 'cand', rating: 0, note: '時間不夠就省略', review: '' },
+        { id: uid(), zh: '甘川文化村', ko: '감천문화마을', kw: '감천문화마을', area: '甘川', hours: '', ticket: '免費入村', stay: '2–3 小時', prio: 'must', status: 'sched', rating: 0, note: '', review: '' },
+        { id: uid(), zh: 'Arte Museum', ko: '아르떼뮤지엄 부산', kw: '아르떼뮤지엄 부산', area: '南浦洞', hours: '10:00–20:00（最後入場 19:00）', ticket: '平日 ₩19,000', stay: '1.5–2 小時', prio: 'want', status: 'sched', rating: 0, note: '', review: '' },
+        { id: uid(), zh: 'Spa Land Centum City', ko: '스파랜드 센텀시티', kw: '스파랜드 센텀시티', area: '海雲台', hours: '', ticket: 'Big5 A 組', stay: '2 小時', prio: 'want', status: 'sched', rating: 0, note: '', review: '' },
+        { id: uid(), zh: 'Hill Spa', ko: '힐스파', kw: '힐스파 해운대', area: '海雲台', hours: '24 小時（待確認）', ticket: 'Big5 藍區（B 組）', stay: '', prio: 'alt', status: 'cand', rating: 0, note: '候選；海景汗蒸幕', review: '' },
+        { id: uid(), zh: 'Aqua Palace Spa & Sauna', ko: '호텔 아쿠아펠리스 사우나', kw: '호텔 아쿠아펠리스 부산', area: '', hours: '', ticket: '', stay: '', prio: 'alt', status: 'cand', rating: 0, note: '在 Visit Busan Pass 名單，A／B 組尚未確認', review: '' }
+      ],
+      foods: [
+        { id: uid(), zh: '極東豬肉湯飯 廣安里店', ko: '극동돼지국밥 광안리점', kw: '극동돼지국밥 광안리점', area: '廣安里', hours: '08:00–21:00', dish: '瘦肉湯飯 살코기국밥', price: '₩10,000', prio: 'want', status: 'sched', rating: 0, note: 'Catch Table 可預約', review: '' },
+        { id: uid(), zh: '이낙에산다 廣安里', ko: '이낙에산다', kw: '이낙에산다 광안리', area: '廣安里（南川洞）', hours: '11:00–20:50（最後點餐 20:20）', dish: '章腸蝦鍋 낙곱새', price: '₩14,000', prio: 'want', status: 'cand', rating: 0, note: '活章魚清湯為總店限定（單一來源）', review: '' },
+        { id: uid(), zh: '83 Haechi 烤肉', ko: '83해치 광안리점', kw: '83해치 광안리점', area: '廣安里（民樂）', hours: '約 16:00–00:30（最後點餐約 23:40）', dish: '豬頸肉／五花肉', price: '人均約 NT$500', prio: 'alt', status: 'cand', rating: 0, note: '遊艇後宵夜備選；電話 0507-1312-8377', review: '' },
+        { id: uid(), zh: '31cm 海物刀削麵 松亭本店', ko: '해운대31cm해물칼국수 송정본점', kw: '해운대31cm해물칼국수 송정본점', area: '松亭', hours: '11:00–21:00（15:00–17:00 休息，週二公休）', dish: '招牌海物刀削麵', price: '₩10,000', prio: 'want', status: 'sched', rating: 0, note: '', review: '' },
+        { id: uid(), zh: '金水福河豚湯 海雲台本店', ko: '금수복국 해운대본점', kw: '금수복국 해운대본점', area: '海雲台', hours: '24 小時', dish: '河豚湯', price: '₩15,000–23,000', prio: 'must', status: 'sched', rating: 0, note: '米其林指南收錄', review: '' },
+        { id: uid(), zh: '海之丸鮑魚粥', ko: '바다마루전복죽', kw: '바다마루전복죽', area: '海雲台（月迎路）', hours: '07:00–20:00（14:30–16:00 休息，最後點餐 19:30）', dish: '鮑魚粥', price: '₩13,000 起', prio: 'alt', status: 'cand', rating: 0, note: '可當 Day3 早餐；Catch Table 預約', review: '' },
+        { id: uid(), zh: '羅沙里食堂 廣安店', ko: '나사리식당 광안점', kw: '나사리식당 광안점', area: '廣安里', hours: '10:00–22:00', dish: '海鮮刀削麵', price: '₩15,000', prio: 'alt', status: 'cand', rating: 0, note: '靠窗位不能預約', review: '' }
+      ],
+      expenses: [
+        { id: uid(), name: '來回機票（7C6152／7C6153）', amt: 19252, cur: 'TWD', cat: '交通', pay: '信用卡', status: 'paid', tax: 'done' },
+        { id: uid(), name: 'Hotel Homers 4 晚', amt: 25443, cur: 'TWD', cat: '住宿', pay: '信用卡', status: 'paid', tax: 'done' },
+        { id: uid(), name: '膠囊列車（2 人艙單程）', amt: 1137, cur: 'TWD', cat: '門票', pay: '信用卡', status: 'paid', tax: 'done' },
+        { id: uid(), name: 'Big5 景點套票 ×2', amt: 340, cur: 'CNY', cat: '門票', pay: '信用卡', status: 'paid', tax: 'done' },
+        { id: uid(), name: 'Yachtholic 遊艇（2 人）', amt: 46400, cur: 'KRW', cat: '門票', pay: '信用卡', status: 'paid', tax: 'done' },
+        { id: uid(), name: '機場 → 飯店計程車', amt: 750, cur: 'TWD', cat: '交通', pay: '現金', status: 'est', tax: 'done' },
+        { id: uid(), name: '購物（範例，示範未退稅）', amt: 100000, cur: 'KRW', cat: '購物', pay: 'LINE PAY', status: 'est', tax: 'pending', sample: true }
+      ],
+      checks: [
+        { id: uid(), cat: '證件與入境', text: '填寫 e-Arrival Card（抵達前 72 小時內）', due: '2026-10-09', done: false },
+        { id: uid(), cat: '證件與入境', text: '確認 K-ETA 免申請（至 2026/12/31）', due: '', done: true },
+        { id: uid(), cat: '預約訂位', text: 'Yachtholic 遊艇 10/9 20:30', due: '', done: true },
+        { id: uid(), cat: '預約訂位', text: '膠囊列車 10/11 17:00', due: '', done: true },
+        { id: uid(), cat: '預約訂位', text: 'Genius Clinic 10/13 14:00', due: '', done: true },
+        { id: uid(), cat: '預約訂位', text: '預約極東豬肉湯飯（Catch Table）', due: '2026-10-08', done: false },
+        { id: uid(), cat: '行李', text: '購買並安裝 eSIM', due: '2026-10-08', done: false },
+        { id: uid(), cat: '行李', text: '備用台幣現鈔（1000／500 面額）', due: '2026-10-08', done: false },
+        { id: uid(), cat: '金錢支付', text: '悠遊付開通韓國跨境支付', due: '2026-10-08', done: false },
+        { id: uid(), cat: '金錢支付', text: '信用卡切換出國回饋模式', due: '2026-10-08', done: false }
+      ],
+      phrases: [
+        { id: uid(), cat: '打招呼', zh: '您好', ko: '안녕하세요', rm: 'annyeonghaseyo' },
+        { id: uid(), cat: '打招呼', zh: '謝謝', ko: '감사합니다', rm: 'gamsahamnida' },
+        { id: uid(), cat: '打招呼', zh: '對不起／不好意思', ko: '죄송합니다', rm: 'joesonghamnida' },
+        { id: uid(), cat: '點餐', zh: '請給我這個', ko: '이거 주세요', rm: 'igeo juseyo' },
+        { id: uid(), cat: '點餐', zh: '請不要太辣', ko: '너무 맵지 않게 해 주세요', rm: 'neomu maepji anke hae juseyo' },
+        { id: uid(), cat: '點餐', zh: '請給我水', ko: '물 좀 주세요', rm: 'mul jom juseyo' },
+        { id: uid(), cat: '點餐', zh: '請幫我外帶', ko: '포장해 주세요', rm: 'pojanghae juseyo' },
+        { id: uid(), cat: '購物', zh: '多少錢？', ko: '얼마예요?', rm: 'eolmayeyo' },
+        { id: uid(), cat: '購物', zh: '可以刷卡嗎？', ko: '카드 돼요?', rm: 'kadeu dwaeyo' },
+        { id: uid(), cat: '購物', zh: '請幫我結帳', ko: '계산해 주세요', rm: 'gyesanhae juseyo' },
+        { id: uid(), cat: '購物', zh: '請給我收據', ko: '영수증 주세요', rm: 'yeongsujeung juseyo' },
+        { id: uid(), cat: '購物', zh: '可以退稅嗎？', ko: 'Tax Refund 가능해요?', rm: 'Tax Refund ganeunghaeyo' },
+        { id: uid(), cat: '交通', zh: '洗手間在哪裡？', ko: '화장실이 어디예요?', rm: 'hwajangsiri eodiyeyo' },
+        { id: uid(), cat: '緊急', zh: '請幫幫我', ko: '도와주세요', rm: 'dowajuseyo' },
+        { id: uid(), cat: '緊急', zh: '我會暈（船）', ko: '멀미가 나요', rm: 'meolmiga nayo' }
+      ]
+    };
+  }
+
+  /* ---------- state ---------- */
+  var SNAP = {"rates":{"CNY":4.74,"KRW":0.02366,"TWD":1},"stops":[{"day":0,"done":false,"kw":"","note":"8點半搭1962到機場","ord":0,"rsv":"booked","time":"12:00","title":"桃園起飛（7C6152）","tr":"","id":"s000"},{"day":0,"done":false,"kw":"김해국제공항","note":"","ord":1,"rsv":"none","time":"15:30","title":"抵達釜山金海機場","tr":"","id":"s001"},{"day":0,"done":false,"kw":"김해국제공항","note":"3 號出口旁；備用台幣 1000／500 面額","ord":2,"rsv":"none","time":"16:00","title":"MoneyBox 換錢、領 VBP","tr":"","id":"s002"},{"day":0,"done":false,"kw":"","note":"","ord":3,"rsv":"none","time":"16:15–17:00","title":"機場接駁","tr":"計程車，約 45–50 分","id":"s003"},{"day":0,"done":false,"kw":"호텔 호메르스 광안리","note":"15:00 起可入住","ord":4,"rsv":"none","time":"17:00","title":"Check in Hotel Homers","tr":"","id":"s004"},{"day":0,"done":false,"kw":"극동돼지국밥 광안리점","note":"暫排；點瘦肉湯飯（살코기국밥），吃半飽；Catch Table 可預約","ord":5,"rsv":"todo","time":"18:00","title":"晚餐 極東豬肉湯飯","tr":"","id":"s005"},{"day":0,"done":false,"kw":"광안리해양레포츠센터","note":"20:05 前報到","ord":6,"rsv":"none","time":"19:45","title":"走路到 Yachtholic","tr":"步行","id":"s006"},{"day":0,"done":false,"kw":"요트홀릭 광안리","note":"₩46,400／2 人；船上禁止飲食、沒有廁所","ord":7,"rsv":"booked","time":"20:30–21:30","title":"Yachtholic 遊艇","tr":"","id":"s007"},{"day":0,"done":false,"kw":"","note":"備選：83 Haechi 宵夜（最後點餐約 23:40）","ord":8,"rsv":"none","time":"21:45","title":"回飯店休息","tr":"","id":"s008"},{"day":1,"done":false,"kw":"","note":"","ord":9,"rsv":"none","time":"09:00","title":"廣安里出發","tr":"公車 1003 → 南浦洞轉乘至白淺灘","id":"s009"},{"day":1,"done":false,"kw":"흰여울문화마을","note":"","ord":10,"rsv":"none","time":"10:00–11:30","title":"白淺灘文化村","tr":"","id":"s010"},{"day":1,"done":false,"kw":"에테르 영도","note":"","ord":11,"rsv":"none","time":"11:30–12:15","title":"Aether 海景咖啡廳","tr":"","id":"s011"},{"day":1,"done":false,"kw":"","note":"候選：ARP아르프／明星一隻雞","ord":12,"rsv":"none","time":"12:15–13:30","title":"午餐（待定）","tr":"","id":"s012"},{"day":1,"done":false,"kw":"THRILL ON THE MUG","note":"","ord":13,"rsv":"none","time":"13:30–14:15","title":"THRILL ON THE MUG","tr":"","id":"s013"},{"day":1,"done":false,"kw":"청학배수지 전망대","note":"","ord":14,"rsv":"none","time":"14:15–14:45","title":"靑鶴配水池展望台","tr":"","id":"s014"},{"day":1,"done":false,"kw":"","note":"","ord":15,"rsv":"none","time":"14:45","title":"前往西面","tr":"約 25–40 分","id":"s015"},{"day":1,"done":false,"kw":"롯데백화점 부산본점","note":"","ord":16,"rsv":"none","time":"15:30–17:30","title":"西面購物","tr":"","id":"s016"},{"day":1,"done":false,"kw":"","note":"","ord":17,"rsv":"none","time":"17:30","title":"地鐵 2 號線回廣安里","tr":"約 14 分＋步行","id":"s017"},{"day":1,"done":false,"kw":"","note":"候選：이낙에산다（낙곱새）","ord":18,"rsv":"none","time":"18:30","title":"晚餐（待定，廣安里）","tr":"","id":"s018"},{"day":1,"done":false,"kw":"광안리해수욕장","note":"約 10 分鐘；僅週六演出","ord":19,"rsv":"none","time":"21:00","title":"廣安里無人機表演","tr":"","id":"s019"},{"day":2,"done":false,"kw":"부산 엑스더스카이","note":"","ord":20,"rsv":"none","time":"09:30–11:00","title":"X the SKY","tr":"","id":"s020"},{"day":2,"done":false,"kw":"해변열차 미포정거장","note":"","ord":21,"rsv":"none","time":"11:15","title":"尾浦搭海岸列車 → 松亭","tr":"單程約 30 分","id":"s021"},{"day":2,"done":false,"kw":"해운대31cm해물칼국수 송정본점","note":"週二公休；15:00–17:00 休息","ord":22,"rsv":"none","time":"12:00–13:00","title":"午餐 해운대31cm해물칼국수 송정本店","tr":"","id":"s022"},{"day":2,"done":false,"kw":"해동용궁사","note":"","ord":23,"rsv":"none","time":"13:00–14:00","title":"海東龍宮寺","tr":"","id":"s023"},{"day":2,"done":false,"kw":"스카이라인루지 부산","note":"另付約 ₩30,000–34,000／人；不去可多約 1 小時緩衝","ord":24,"rsv":"none","time":"14:00–15:15","title":"〔彈性〕Skyline Luge","tr":"","id":"s024"},{"day":2,"done":false,"kw":"","note":"","ord":25,"rsv":"none","time":"15:15","title":"步行松亭 → 靑沙浦","tr":"步行約 35–40 分","id":"s025"},{"day":2,"done":false,"kw":"청사포 다릿돌전망대","note":"","ord":26,"rsv":"none","time":"16:00–16:30","title":"青沙浦天空步道","tr":"","id":"s026"},{"day":2,"done":false,"kw":"청사포정거장 스카이캡슐","note":"已購票，落日時段","ord":27,"rsv":"booked","time":"17:00","title":"膠囊列車","tr":"","id":"s027"},{"day":2,"done":false,"kw":"미포정거장","note":"","ord":28,"rsv":"none","time":"17:30","title":"抵達尾浦站","tr":"","id":"s028"},{"day":2,"done":false,"kw":"금수복국 해운대본점","note":"河豚湯，24 小時營業","ord":29,"rsv":"none","time":"18:15","title":"晚餐 金수복국 해운대本店","tr":"","id":"s029"},{"day":2,"done":false,"kw":"스파랜드 센텀시티","note":"2 小時","ord":30,"rsv":"none","time":"19:30–21:30","title":"Spa Land Centum City","tr":"","id":"s030"},{"day":2,"done":false,"kw":"","note":"","ord":31,"rsv":"none","time":"22:00","title":"回飯店休息","tr":"","id":"s031"},{"day":3,"done":false,"kw":"","note":"","ord":32,"rsv":"none","time":"09:00","title":"出發前往甘川文化村","tr":"約 1 小時（估算）","id":"s032"},{"day":3,"done":false,"kw":"감천문화마을","note":"手翻書、小王子拍照、韓服體驗","ord":33,"rsv":"none","time":"10:00–13:00","title":"甘川文化村","tr":"","id":"s033"},{"day":3,"done":false,"kw":"","note":"候選：新巨人炸雞／隱世冷拉麵／雙胞胎豬肉湯飯","ord":34,"rsv":"none","time":"13:00","title":"午餐（待定）","tr":"","id":"s034"},{"day":3,"done":false,"kw":"송도해수욕장","note":"","ord":35,"rsv":"none","time":"14:00–14:45","title":"松島列車","tr":"單程約 30 分","id":"s035"},{"day":3,"done":false,"kw":"송도 용궁구름다리","note":"","ord":36,"rsv":"none","time":"14:45–15:15","title":"龍宮雲橋","tr":"","id":"s036"},{"day":3,"done":false,"kw":"","note":"","ord":37,"rsv":"none","time":"15:45","title":"前往南浦洞 Arte Museum","tr":"約 30 分（估算）","id":"s037"},{"day":3,"done":false,"kw":"아르떼뮤지엄 부산","note":"10:00–20:00，最後入場 19:00；平日 ₩19,000","ord":38,"rsv":"none","time":"16:15–18:00","title":"Arte Museum","tr":"","id":"s038"},{"day":3,"done":false,"kw":"P.ARK 부산","note":"與 Arte Museum 同棟","ord":39,"rsv":"none","time":"18:00–18:45","title":"P.ARK","tr":"","id":"s039"},{"day":3,"done":false,"kw":"남포동","note":"","ord":40,"rsv":"none","time":"19:00–20:30","title":"南浦市場逛街＋晚餐（待定）","tr":"","id":"s040"},{"day":3,"done":false,"kw":"","note":"","ord":41,"rsv":"none","time":"20:30","title":"之後彈性，回廣安里","tr":"","id":"s041"},{"day":4,"done":false,"kw":"","note":"","ord":42,"rsv":"none","time":"09:30","title":"早餐、整理行李","tr":"","id":"s042"},{"day":4,"done":false,"kw":"","note":"","ord":43,"rsv":"none","time":"10:30","title":"退房（11:00 前）→ 帶行李到西面","tr":"約 30–40 分","id":"s043"},{"day":4,"done":false,"kw":"서면역","note":"24 小時可用","ord":44,"rsv":"none","time":"11:15","title":"西面站置物櫃寄放行李","tr":"","id":"s044"},{"day":4,"done":false,"kw":"전포카페거리","note":"最後的伴手禮採買","ord":45,"rsv":"none","time":"11:30–13:30","title":"西面購物／田浦咖啡街＋午餐（待定）","tr":"","id":"s045"},{"day":4,"done":false,"kw":"지니어스의원 서면","note":"13:40 前抵達","ord":46,"rsv":"booked","time":"14:00–15:30","title":"Genius Clinic","tr":"","id":"s046"},{"day":4,"done":false,"kw":"","note":"可調整","ord":47,"rsv":"none","time":"15:30–18:00","title":"最後採買／休息","tr":"","id":"s047"},{"day":4,"done":false,"kw":"","note":"","ord":48,"rsv":"none","time":"18:00","title":"取回行李 → 機場","tr":"地鐵 2 號線 → 沙上 → 輕軌，約 40–50 分","id":"s048"},{"day":4,"done":false,"kw":"김해국제공항","note":"","ord":49,"rsv":"none","time":"19:00","title":"抵達金海機場","tr":"","id":"s049"},{"day":4,"done":false,"kw":"","note":"","ord":50,"rsv":"booked","time":"22:00","title":"釜山起飛（7C6153）","tr":"","id":"s050"}],"places":[{"area":"影島","hours":"","ko":"흰여울문화마을","kw":"흰여울문화마을","note":"坡道階梯多","ord":0,"prio":"want","rating":0,"review":"","status":"sched","stay":"1–1.5 小時","ticket":"免費","zh":"白淺灘文化村","id":"p000"},{"area":"海雲台","hours":"","ko":"부산 엑스더스카이","kw":"부산 엑스더스카이","note":"","ord":1,"prio":"want","rating":0,"review":"","status":"sched","stay":"1–2 小時","ticket":"約 ₩27,000","zh":"X the SKY","id":"p001"},{"area":"機張","hours":"","ko":"해동용궁사","kw":"해동용궁사","note":"","ord":2,"prio":"must","rating":0,"review":"","status":"sched","stay":"至少 1 小時","ticket":"免費","zh":"海東龍宮寺","id":"p002"},{"area":"機張","hours":"","ko":"스카이라인루지 부산","kw":"스카이라인루지 부산","note":"時間不夠就省略","ord":3,"prio":"alt","rating":0,"review":"","status":"cand","stay":"1–1.5 小時","ticket":"約 ₩30,000–34,000","zh":"Skyline Luge","id":"p003"},{"area":"甘川","hours":"","ko":"감천문화마을","kw":"감천문화마을","note":"","ord":4,"prio":"must","rating":0,"review":"","status":"sched","stay":"2–3 小時","ticket":"免費入村","zh":"甘川文化村","id":"p004"},{"area":"南浦洞","hours":"10:00–20:00（最後入場 19:00）","ko":"아르떼뮤지엄 부산","kw":"아르떼뮤지엄 부산","note":"","ord":5,"prio":"want","rating":0,"review":"","status":"sched","stay":"1.5–2 小時","ticket":"平日 ₩19,000","zh":"Arte Museum","id":"p005"},{"area":"海雲台","hours":"","ko":"스파랜드 센텀시티","kw":"스파랜드 센텀시티","note":"","ord":6,"prio":"want","rating":0,"review":"","status":"sched","stay":"2 小時","ticket":"Big5 A 組","zh":"Spa Land Centum City","id":"p006"},{"area":"海雲台","hours":"24 小時（待確認）","ko":"힐스파","kw":"힐스파 해운대","note":"候選；海景汗蒸幕","ord":7,"prio":"alt","rating":0,"review":"","status":"cand","stay":"","ticket":"Big5 藍區（B 組）","zh":"Hill Spa","id":"p007"},{"area":"","hours":"","ko":"호텔 아쿠아펠리스 사우나","kw":"호텔 아쿠아펠리스 부산","note":"在 Visit Busan Pass 名單，A／B 組尚未確認","ord":8,"prio":"alt","rating":0,"review":"","status":"cand","stay":"","ticket":"","zh":"Aqua Palace Spa & Sauna","id":"p008"}],"foods":[{"area":"廣安里","dish":"瘦肉湯飯 살코기국밥","hours":"08:00–21:00","ko":"극동돼지국밥 광안리점","kw":"극동돼지국밥 광안리점","note":"Catch Table 可預約","ord":0,"price":"₩10,000","prio":"want","rating":0,"review":"","status":"sched","zh":"極東豬肉湯飯 廣安里店","id":"f000"},{"area":"廣安里（南川洞）","dish":"章腸蝦鍋 낙곱새","hours":"11:00–20:50（最後點餐 20:20）","ko":"이낙에산다","kw":"이낙에산다 광안리","note":"活章魚清湯為總店限定（單一來源）","ord":1,"price":"₩14,000","prio":"want","rating":0,"review":"","status":"cand","zh":"이낙에산다 廣安里","id":"f001"},{"area":"廣安里（民樂）","dish":"豬頸肉／五花肉","hours":"約 16:00–00:30（最後點餐約 23:40）","ko":"83해치 광안리점","kw":"83해치 광안리점","note":"遊艇後宵夜備選；電話 0507-1312-8377","ord":2,"price":"人均約 NT$500","prio":"alt","rating":0,"review":"","status":"cand","zh":"83 Haechi 烤肉","id":"f002"},{"area":"松亭","dish":"招牌海物刀削麵","hours":"11:00–21:00（15:00–17:00 休息，週二公休）","ko":"해운대31cm해물칼국수 송정본점","kw":"해운대31cm해물칼국수 송정본점","note":"","ord":3,"price":"₩10,000","prio":"want","rating":0,"review":"","status":"sched","zh":"31cm 海物刀削麵 松亭本店","id":"f003"},{"area":"海雲台","dish":"河豚湯","hours":"24 小時","ko":"금수복국 해운대본점","kw":"금수복국 해운대본점","note":"米其林指南收錄","ord":4,"price":"₩15,000–23,000","prio":"must","rating":0,"review":"","status":"sched","zh":"金水福河豚湯 海雲台本店","id":"f004"},{"area":"海雲台（月迎路）","dish":"鮑魚粥","hours":"07:00–20:00（14:30–16:00 休息，最後點餐 19:30）","ko":"바다마루전복죽","kw":"바다마루전복죽","note":"可當 Day3 早餐；Catch Table 預約","ord":5,"price":"₩13,000 起","prio":"alt","rating":0,"review":"","status":"cand","zh":"海之丸鮑魚粥","id":"f005"},{"area":"廣安里","dish":"海鮮刀削麵","hours":"10:00–22:00","ko":"나사리식당 광안점","kw":"나사리식당 광안점","note":"靠窗位不能預約","ord":6,"price":"₩15,000","prio":"alt","rating":0,"review":"","status":"cand","zh":"羅沙里食堂 廣安店","id":"f006"}],"expenses":[{"amt":19252,"cat":"交通","cur":"TWD","name":"來回機票（7C6152／7C6153）","ord":0,"pay":"信用卡","status":"paid","tax":"done","id":"e000"},{"amt":25443,"cat":"住宿","cur":"TWD","name":"Hotel Homers 4 晚","ord":1,"pay":"信用卡","status":"paid","tax":"done","id":"e001"},{"amt":1137,"cat":"門票","cur":"TWD","name":"膠囊列車（2 人艙單程）","ord":2,"pay":"信用卡","status":"paid","tax":"done","id":"e002"},{"amt":340,"cat":"門票","cur":"CNY","name":"Big5 景點套票 ×2","ord":3,"pay":"信用卡","status":"paid","tax":"done","id":"e003"},{"amt":46400,"cat":"門票","cur":"KRW","name":"Yachtholic 遊艇（2 人）","ord":4,"pay":"信用卡","status":"paid","tax":"done","id":"e004"},{"amt":750,"cat":"交通","cur":"TWD","name":"機場 → 飯店計程車","ord":5,"pay":"現金","status":"est","tax":"done","id":"e005"},{"amt":100000,"cat":"購物","cur":"KRW","name":"購物（範例，示範未退稅）","ord":6,"pay":"LINE PAY","sample":true,"status":"est","tax":"pending","id":"e006"}],"checks":[{"cat":"證件與入境","done":false,"due":"2026-10-09","ord":0,"text":"填寫 e-Arrival Card（抵達前 72 小時內）","id":"c000"},{"cat":"證件與入境","done":true,"due":"","ord":1,"text":"確認 K-ETA 免申請（至 2026/12/31）","id":"c001"},{"cat":"預約訂位","done":true,"due":"","ord":2,"text":"Yachtholic 遊艇 10/9 20:30","id":"c002"},{"cat":"預約訂位","done":true,"due":"","ord":3,"text":"膠囊列車 10/11 17:00","id":"c003"},{"cat":"預約訂位","done":true,"due":"","ord":4,"text":"Genius Clinic 10/13 14:00","id":"c004"},{"cat":"預約訂位","done":false,"due":"2026-10-08","ord":5,"text":"預約極東豬肉湯飯（Catch Table）","id":"c005"},{"cat":"行李","done":false,"due":"2026-10-08","ord":6,"text":"購買並安裝 eSIM","id":"c006"},{"cat":"行李","done":false,"due":"2026-10-08","ord":7,"text":"備用台幣現鈔（1000／500 面額）","id":"c007"},{"cat":"金錢支付","done":false,"due":"2026-10-08","ord":8,"text":"悠遊付開通韓國跨境支付","id":"c008"},{"cat":"金錢支付","done":false,"due":"2026-10-08","ord":9,"text":"信用卡切換出國回饋模式","id":"c009"}],"phrases":[{"cat":"打招呼","ko":"안녕하세요","ord":0,"rm":"annyeonghaseyo","zh":"您好","id":"p000"},{"cat":"打招呼","ko":"감사합니다","ord":1,"rm":"gamsahamnida","zh":"謝謝","id":"p001"},{"cat":"打招呼","ko":"죄송합니다","ord":2,"rm":"joesonghamnida","zh":"對不起／不好意思","id":"p002"},{"cat":"點餐","ko":"이거 주세요","ord":3,"rm":"igeo juseyo","zh":"請給我這個","id":"p003"},{"cat":"點餐","ko":"너무 맵지 않게 해 주세요","ord":4,"rm":"neomu maepji anke hae juseyo","zh":"請不要太辣","id":"p004"},{"cat":"點餐","ko":"물 좀 주세요","ord":5,"rm":"mul jom juseyo","zh":"請給我水","id":"p005"},{"cat":"點餐","ko":"포장해 주세요","ord":6,"rm":"pojanghae juseyo","zh":"請幫我外帶","id":"p006"},{"cat":"購物","ko":"얼마예요?","ord":7,"rm":"eolmayeyo","zh":"多少錢？","id":"p007"},{"cat":"購物","ko":"카드 돼요?","ord":8,"rm":"kadeu dwaeyo","zh":"可以刷卡嗎？","id":"p008"},{"cat":"購物","ko":"계산해 주세요","ord":9,"rm":"gyesanhae juseyo","zh":"請幫我結帳","id":"p009"},{"cat":"購物","ko":"영수증 주세요","ord":10,"rm":"yeongsujeung juseyo","zh":"請給我收據","id":"p010"},{"cat":"購物","ko":"Tax Refund 가능해요?","ord":11,"rm":"Tax Refund ganeunghaeyo","zh":"可以退稅嗎？","id":"p011"},{"cat":"交通","ko":"화장실이 어디예요?","ord":12,"rm":"hwajangsiri eodiyeyo","zh":"洗手間在哪裡？","id":"p012"},{"cat":"緊急","ko":"도와주세요","ord":13,"rm":"dowajuseyo","zh":"請幫幫我","id":"p013"},{"cat":"緊急","ko":"멀미가 나요","ord":14,"rm":"meolmiga nayo","zh":"我會暈（船）","id":"p014"}]}, SNAP_AT = "2026-10-06 15:55";
+  var UKEY = 'busan-ui-v1', LKEY = 'busan-system-proto-v3', CKEY = 'busan-cache-v1';
+  var COLS = ['stops', 'places', 'foods', 'expenses', 'checks', 'phrases'];
+  var MEM = { att: {}, inv: {} };
+  function rd(k) { try { var r = localStorage.getItem(k); return r ? JSON.parse(r) : null; } catch (e) { return null; } }
+  function wr(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  var UI0 = { tab: 'overview', day: 0, sim: 'auto', pf: 'all', ff: 'all', phc: 'all' };
+  var u0 = rd(UKEY) || {};
+  var PREF = u0.editPref !== false;
+  var S = { ui: Object.assign({}, UI0, u0, { edit: false, editStop: '', editNote: '' }), rates: Object.assign({}, RATES0), stops: [], places: [], foods: [], expenses: [], checks: [], phrases: [] };
+  var CLOUD = null, USER = null, CANWRITE = false, READY = false, SYNC = 'loading', dirty = false;
+  function dataOf() { var o = { rates: S.rates }; COLS.forEach(function (c) { o[c] = S[c]; }); return o; }
+  function saveLocal() { wr(LKEY, Object.assign({ v: 3 }, dataOf())); }
+  function saveCache() { wr(CKEY, dataOf()); }
+  function saveUi() { var u = Object.assign({}, S.ui, { editPref: PREF }); delete u.edit; delete u.editStop; delete u.editNote; wr(UKEY, u); }
+  function loadInto(o) { S.rates = Object.assign({}, RATES0, o.rates || {}); COLS.forEach(function (c) { S[c] = (o[c] || []).slice(); }); }
+  (function () { var c = rd(CKEY); if (c) { loadInto(c); READY = true; SYNC = 'cache'; } })();
+
+  /* ---------- data layer: cloud db when available, otherwise this browser only ---------- */
+  function find(arr, id) { return arr.filter(function (x) { return x.id === id; })[0]; }
+  function stripId(o) { var r = {}; Object.keys(o).forEach(function (k) { if (k !== 'id' && o[k] !== undefined) r[k] = o[k]; }); return r; }
+  function dbErr(e) { toast('儲存失敗（' + ((e && e.code) || '未知') + '），請稍後再試'); render(); }
+  function put(c, o) {
+    if (CLOUD) return CLOUD.doc(c + '/' + o.id).set(stripId(o)).catch(dbErr);
+    var i = S[c].findIndex(function (x) { return x.id === o.id; });
+    if (i >= 0) S[c][i] = o; else S[c].push(o);
+    saveLocal(); render(); return Promise.resolve();
+  }
+  function patch(c, id, f) {
+    if (CLOUD) return CLOUD.doc(c + '/' + id).update(f).catch(dbErr);
+    var o = find(S[c], id); if (o) Object.keys(f).forEach(function (k) { o[k] = f[k]; });
+    saveLocal(); render(); return Promise.resolve();
+  }
+  function del(c, id) {
+    if (CLOUD) return CLOUD.doc(c + '/' + id).delete().catch(dbErr);
+    S[c] = S[c].filter(function (x) { return x.id !== id; }); saveLocal(); render(); return Promise.resolve();
+  }
+  function setRate(cur, v) {
+    S.rates[cur] = v;
+    if (CLOUD) return CLOUD.doc('meta/settings').set({ rates: S.rates }).catch(dbErr);
+    saveLocal(); render(); return Promise.resolve();
+  }
+  function uiCommit() { saveUi(); render(); }
+  function collOf(id) { return find(S.places, id) ? 'places' : 'foods'; }
+
+  var TABS = [
+    ['overview', '總覽', 'overview', 'var(--sky)'], ['route', '行程', 'route', 'var(--coral)'], ['spot', '景點', 'spot', 'var(--sun)'], ['food', '美食', 'food', 'var(--pink)'],
+    ['money', '費用', 'money', 'var(--mint)'], ['check', '檢查', 'check', 'var(--sky)'], ['phrase', '語句', 'chat', 'var(--coral)']
+  ];
+  var PRIO = { must: '必去', want: '想去', alt: '備選' };
+  var STAT = { cand: '候選', sched: '已排入', done: '已去', drop: '放棄' };
+
+  /* ---------- date logic ---------- */
+  function todayIso() { return ymd(new Date()); }
+  function effDay() {
+    if (S.ui.sim !== 'auto') return Number(S.ui.sim);
+    var t = todayIso(), i = DAYS.findIndex(function (d) { return d.iso === t; });
+    return i >= 0 ? i : 0;
+  }
+  function tripStatus() {
+    var t = todayIso();
+    if (S.ui.sim !== 'auto') return { big: '預覽', text: '模擬日期 ' + DAYS[Number(S.ui.sim)].label };
+    if (t < DAYS[0].iso) { return { big: Math.round((new Date(DAYS[0].iso) - new Date(t)) / 86400000), text: '天後出發' }; }
+    if (t <= DAYS[4].iso) { return { big: '第 ' + (DAYS.findIndex(function (d) { return d.iso === t; }) + 1) + ' 天', text: '旅途中' }; }
+    return { big: '完', text: '旅程已結束' };
+  }
+  function dayStops(d) { return S.stops.filter(function (s) { return s.day === d; }).sort(function (a, b) { return ((a.ord || 0) - (b.ord || 0)) || (a.id < b.id ? -1 : 1); }); }
+  function allStops() { return [].concat.apply([], DAYS.map(function (_, i) { return dayStops(i); })); }
+  function reorder(d, ids) {
+    var jobs = [];
+    ids.forEach(function (id, i) { var s = find(S.stops, id); if (s && s.ord !== i) jobs.push([id, i]); });
+    jobs.forEach(function (j) { find(S.stops, j[0]).ord = j[1]; });
+    if (!CLOUD) { saveLocal(); render(); return Promise.resolve(); }
+    render();
+    return Promise.all(jobs.map(function (j) { return CLOUD.doc('stops/' + j[0]).update({ ord: j[1] }); })).catch(dbErr);
+  }
+
+  /* ---------- money ---------- */
+  function twd(e) { return e.amt * (S.rates[e.cur] || 1); }
+  function sums() {
+    var paid = 0, est = 0, unref = 0, cat = {}, pay = {}, cur = {};
+    S.expenses.forEach(function (e) {
+      var v = twd(e);
+      if (e.status === 'paid') paid += v; else est += v;
+      if (e.tax === 'pending') unref += v;
+      cat[e.cat] = (cat[e.cat] || 0) + v; pay[e.pay] = (pay[e.pay] || 0) + v; cur[e.cur] = (cur[e.cur] || 0) + e.amt;
+    });
+    return { paid: paid, est: est, unref: unref, cat: cat, pay: pay, cur: cur };
+  }
+
+  /* ---------- renderers ---------- */
+  function rsvPill(r) { return r === 'booked' ? '<span class="pill ok">已訂位</span>' : r === 'todo' ? '<span class="pill warn">待訂位</span>' : ''; }
+
+  function editStopForm(s) {
+    return '<li class="stop editing dc' + s.day + '" data-id="' + s.id + '"><form class="f" data-form="editstop" data-id="' + s.id + '" style="padding:0">' +
+      '<label class="fl">時間<input type="text" name="time" value="' + esc(s.time) + '" required></label>' +
+      '<label class="fl">日期<select name="day">' + DAYS.map(function (x, i) { return '<option value="' + i + '"' + (i === s.day ? ' selected' : '') + '>' + x.label + '（' + x.wd + '）</option>'; }).join('') + '</select></label>' +
+      '<label class="fl full">地點／事項<input type="text" name="title" value="' + esc(s.title) + '" required></label>' +
+      '<label class="fl">搜尋關鍵字（NAVER MAP）<input type="text" name="kw" value="' + esc(s.kw) + '"></label>' +
+      '<label class="fl">交通方式與時間<input type="text" name="tr" value="' + esc(s.tr) + '"></label>' +
+      '<label class="fl">預約狀態<select name="rsv"><option value="none"' + (s.rsv === 'none' ? ' selected' : '') + '>不需要</option><option value="todo"' + (s.rsv === 'todo' ? ' selected' : '') + '>待訂位</option><option value="booked"' + (s.rsv === 'booked' ? ' selected' : '') + '>已訂位</option></select></label>' +
+      '<label class="fl full">備註<textarea name="note">' + esc(s.note) + '</textarea></label>' +
+      '<div class="full row"><button class="btn pri" type="submit">' + ic('save') + '儲存</button><button class="btn" type="button" data-act="canceledit">取消</button></div></form></li>';
+  }
+
+  function stopHtml(s, next, compact) {
+    if (!compact && S.ui.edit && S.ui.editStop === s.id) return editStopForm(s);
+    var grip = !compact && S.ui.edit;
+    var att = MEM.att[s.id] || [];
+    var th = att.map(function (u, i) { return '<img class="thumb" src="' + u + '" alt="附件 ' + (i + 1) + '" data-act="zoomimg" data-src="' + s.id + ':' + i + '">'; }).join('');
+    return '<li class="stop dc' + s.day + (grip ? '' : ' nogrip') + (s.done ? ' done' : '') + (next ? ' next' : '') + '" data-id="' + s.id + '">' +
+      (grip ? '<button class="grip" type="button" data-grip="' + s.id + '" aria-label="拖拉調整順序（或按上下鍵）">' + ic('grip') + '</button>' : '') +
+      '<div class="st-time">' + esc(s.time) + '</div>' +
+      '<div><div class="spread"><div class="st-title">' + esc(s.title) + '</div>' + (next ? '<span class="pill pri">下一個</span>' : '') + '</div>' +
+      (s.tr ? '<div class="st-line">↳ ' + esc(s.tr) + '</div>' : '') +
+      (s.note ? '<div class="st-line">' + esc(s.note) + '</div>' : '') +
+      (th ? '<div class="thumbs">' + th + '</div>' : '') +
+      '<div class="st-acts">' + rsvPill(s.rsv) + mapLink(s.kw) +
+      (compact ? '' :
+        '<button class="btn sm edit-only" type="button" data-act="editstop" data-id="' + s.id + '">' + ic('edit') + '編輯</button>' +
+        '<label class="btn sm edit-only" for="att-' + s.id + '">' + ic('image') + '附件</label><input type="file" accept="image/*" id="att-' + s.id + '" data-ch="att" data-id="' + s.id + '" hidden>' +
+        '<label class="row edit-only small" style="gap:6px;margin-left:auto"><input type="checkbox" class="chk ctl" data-ch="done" data-id="' + s.id + '"' + (s.done ? ' checked' : '') + ' aria-label="完成"> 完成</label>' +
+        '<button class="btn sm ghost edit-only" data-act="delstop" data-id="' + s.id + '" aria-label="刪除">刪除</button>') +
+      '</div></div></li>';
+  }
+
+  function syncFoot() {
+    var m = SYNC === 'snapshot' ? '這是快照版（只能看）：資料截至 '+SNAP_AT+'，不會自動更新。需要最新內容請向行程主人索取新檔。' : SYNC === 'cloud' ? '已連線雲端資料庫：' + (CANWRITE ? '你的修改會同步到所有裝置。' : '你以唯讀身分查看，內容會隨主人的修改即時更新。')
+      : SYNC === 'cache' ? '正在連線雲端資料庫…先顯示上次儲存的內容。'
+      : SYNC === 'error' ? '雲端連線失敗，先顯示上次儲存的內容。'
+      : '尚未連到雲端資料庫（可能未登入）：目前是示範資料，只存在這個瀏覽器。';
+    return '<div class="foot">' + m + (SYNC === 'local' ? ' <button class="btn sm ghost" data-act="reset" style="display:inline-flex">重設範例資料</button>' : '') + '</div>';
+  }
+  function vOverview() {
+    var d = effDay(), ts = tripStatus();
+    var stops = dayStops(d);
+    var nextId = (stops.find(function (s) { return !s.done; }) || {}).id;
+    var booked = allStops().filter(function (s) { return s.rsv === 'booked' && !/起飛/.test(s.title); });
+    var sm = sums(), cDone = S.checks.filter(function (c) { return c.done; }).length;
+    var mustLeft = S.places.concat(S.foods).filter(function (p) { return p.prio === 'must' && p.status === 'cand'; }).length;
+    return '' +
+      '<section class="card"><div class="countdown"><div class="sticker">' + esc(ts.big) + '</div><div><div style="font-weight:900;font-size:16px">' + esc(ts.text) + '</div>' +
+      '<div class="small muted">釜山 · 2 人 · 5 天 4 夜</div></div>' +
+      '<label class="fl" style="margin-left:auto;min-width:140px"><span>預覽日期</span><select id="sim">' +
+      '<option value="auto"' + (S.ui.sim === 'auto' ? ' selected' : '') + '>依實際日期</option>' +
+      DAYS.map(function (x, i) { return '<option value="' + i + '"' + (String(S.ui.sim) === String(i) ? ' selected' : '') + '>' + x.label + '（' + x.wd + '）</option>'; }).join('') +
+      '</select></label></div></section>' +
+
+      '<section class="card"><div class="card-h"><h2>今日行程 · ' + DAYS[d].label + '（' + DAYS[d].wd + '）' + esc(DAYS[d].title) + '</h2><span class="hint">點綠色按鈕開 NAVER MAP</span></div>' +
+      '<ul class="stops">' + stops.map(function (s) { return stopHtml(s, s.id === nextId, true); }).join('') + '</ul></section>' +
+
+      '<section class="card"><div class="card-h"><h2>貴重資訊</h2></div><div class="grid2">' +
+      '<div><div class="small muted">去程</div><div style="font-weight:900">7C6152 桃園 → 釜山</div><div class="small">10/9 12:00 起飛，15:30 抵達</div></div>' +
+      '<div><div class="small muted">回程</div><div style="font-weight:900">7C6153 釜山 → 桃園</div><div class="small">10/13 22:00 起飛</div></div>' +
+      '<div style="grid-column:1/-1"><div class="small muted">住宿</div><div style="font-weight:900">Hotel Homers（호텔 호메르스）</div>' +
+      '<div class="small">217 Gwanganhaebyeon-ro, Suyeong-gu · 10/9 15:00 起入住，10/13 11:00 前退房</div><div class="st-acts">' + mapLink('호텔 호메르스 광안리') + '</div></div></div>' +
+      '<div class="card-h" style="margin-top:14px"><h2>已訂位</h2></div>' +
+      booked.map(function (s) { return '<div class="spread" style="padding:7px 0;border-top:2px dotted var(--line)"><div><span class="num small" style="font-weight:700;color:var(--time)">' + DAYS[s.day].label + ' ' + esc(s.time) + '</span><div style="font-size:14px;font-weight:900">' + esc(s.title) + '</div></div>' + mapLink(s.kw) + '</div>'; }).join('') +
+      '</section>' +
+
+      '<section class="card"><div class="card-h"><h2>統計</h2></div><div class="stats">' +
+      '<div class="stat"><div class="l">已付</div><div class="v">' + nt(sm.paid) + '</div></div>' +
+      '<div class="stat"><div class="l">預估</div><div class="v">' + nt(sm.est) + '</div></div>' +
+      '<div class="stat"><div class="l">未退稅</div><div class="v">' + nt(sm.unref) + '</div></div>' +
+      '<div class="stat"><div class="l">檢查事項</div><div class="v">' + cDone + ' / ' + S.checks.length + '</div></div>' +
+      '<div class="stat"><div class="l">必去未排入</div><div class="v">' + mustLeft + ' 項</div></div></div></section>' +
+
+      syncFoot();
+  }
+
+  function vRoute() {
+    var d = S.ui.day;
+    var stops = dayStops(d);
+    var nextId = (stops.find(function (s) { return !s.done; }) || {}).id;
+    var pool = S.places.concat(S.foods).filter(function (p) { return p.status === 'cand'; });
+    return '<div class="chips" role="group" aria-label="選擇日期">' + DAYS.map(function (x, i) {
+      return '<button class="chip dc' + i + '" type="button" data-act="day" data-i="' + i + '" aria-pressed="' + (i === d) + '">' + x.label + '（' + x.wd + '）</button>';
+    }).join('') + '</div>' +
+      '<div class="day-head"><h2>' + DAYS[d].label + ' · ' + esc(DAYS[d].title) + '</h2><span class="small muted">' + stops.length + ' 個停靠點</span></div>' +
+      '<div class="row edit-only"><span class="hint-drag">按住左邊的 ⋮⋮ 拖拉換順序（鍵盤可用上下鍵），時間不會自動改變</span>' +
+      '<button class="btn sm" type="button" data-act="sorttime">依時間排序</button></div>' +
+      '<ul class="stops" id="stopList">' + stops.map(function (s) { return stopHtml(s, s.id === nextId, false); }).join('') + '</ul>' +
+      '<details class="add edit-only"><summary>' + ic('plus') + '新增停靠點</summary>' +
+      '<form class="f" data-form="stop">' +
+      '<label class="fl">時間<input type="text" name="time" placeholder="例：14:30 或 14:30–15:30" required></label>' +
+      '<label class="fl">地點／事項<input type="text" name="title" required></label>' +
+      '<label class="fl">搜尋關鍵字（NAVER MAP）<input type="text" name="kw" placeholder="韓文名稱"></label>' +
+      '<label class="fl">交通方式與時間<input type="text" name="tr" placeholder="例：地鐵 2 號線，約 14 分"></label>' +
+      '<label class="fl">預約狀態<select name="rsv"><option value="none">不需要</option><option value="todo">待訂位</option><option value="booked">已訂位</option></select></label>' +
+      '<label class="fl full">備註（營業時間、注意事項、備選方案）<textarea name="note"></textarea></label>' +
+      '<div class="full row"><button class="btn pri" type="submit">' + ic('save') + '儲存到 ' + DAYS[d].label + '</button></div></form>' +
+      '<form class="f" data-form="pool" style="border-top:2px dashed var(--edge)">' +
+      '<label class="fl full">或從候選池加入（景點與美食的「候選」項目）<select name="pid">' +
+      (pool.length ? pool.map(function (p) { return '<option value="' + p.id + '">' + esc(p.zh) + '</option>'; }).join('') : '<option value="">候選池是空的</option>') +
+      '</select></label><label class="fl">時間<input type="text" name="time" placeholder="例：15:00" required></label>' +
+      '<div class="row" style="align-self:end"><button class="btn" type="submit"' + (pool.length ? '' : ' disabled') + '>' + ic('save') + '儲存</button></div></form></details>';
+  }
+
+  function stars(p) {
+    var h = '<span class="stars" role="group" aria-label="評分">';
+    for (var i = 1; i <= 5; i++) h += '<button class="star ctl' + (i <= p.rating ? ' on' : '') + '" type="button" data-act="rate" data-id="' + p.id + '" data-n="' + i + '" aria-label="' + i + ' 星">★</button>';
+    return h + '</span>';
+  }
+
+  function listItem(p, kind) {
+    var isFood = kind === 'food';
+    var facts = [['區域', p.area], ['營業時間', p.hours]];
+    if (isFood) { facts.push(['招牌菜', p.dish]); facts.push(['價位', p.price]); }
+    else { facts.push(['門票', p.ticket]); facts.push(['預估停留', p.stay]); }
+    var prioCls = p.prio === 'must' ? 'bad' : p.prio === 'want' ? 'warn' : '';
+    var stCls = p.status === 'done' ? 'ok' : p.status === 'sched' ? 'pri' : p.status === 'drop' ? '' : 'pink';
+    var editing = S.ui.edit && S.ui.editNote === p.id;
+    var noteHtml = editing ?
+      '<div><textarea id="nt-' + p.id + '" aria-label="備註">' + esc(p.note) + '</textarea><div class="row" style="margin-top:8px"><button class="btn sm pri" type="button" data-act="savenote" data-kind="' + kind + '" data-id="' + p.id + '">' + ic('save') + '儲存備註</button><button class="btn sm" type="button" data-act="canceledit">取消</button></div></div>' :
+      (p.note ? '<div class="notebox">' + esc(p.note) + '</div>' : '<div class="notebox empty-note edit-only">尚無備註</div>');
+    return '<article class="card item"><div class="spread"><div><h3>' + esc(p.zh) + '</h3><div class="ko-name">' + esc(p.ko) + '</div></div>' +
+      '<div class="row" style="justify-content:flex-end"><span class="pill ' + prioCls + '">' + PRIO[p.prio] + '</span><span class="pill ' + stCls + '">' + STAT[p.status] + '</span></div></div>' +
+      '<div class="facts">' + facts.map(function (f) { return '<div><b>' + f[0] + '</b>' + (f[1] ? esc(f[1]) : '<span class="muted">未填</span>') + '</div>'; }).join('') + '</div>' +
+      noteHtml +
+      '<div class="row">' + mapLink(p.kw) +
+      (editing ? '' : '<button class="btn sm edit-only" type="button" data-act="editnote" data-id="' + p.id + '">' + ic('edit') + '編輯備註</button>') +
+      '<label class="row small edit-only" style="margin-left:auto;gap:6px">狀態<select class="ctl" data-ch="pstatus" data-kind="' + kind + '" data-id="' + p.id + '" style="width:auto">' +
+      Object.keys(STAT).map(function (k) { return '<option value="' + k + '"' + (k === p.status ? ' selected' : '') + '>' + STAT[k] + '</option>'; }).join('') + '</select></label>' +
+      '<label class="row small edit-only" style="gap:6px">優先度<select class="ctl" data-ch="pprio" data-kind="' + kind + '" data-id="' + p.id + '" style="width:auto">' +
+      Object.keys(PRIO).map(function (k) { return '<option value="' + k + '"' + (k === p.prio ? ' selected' : '') + '>' + PRIO[k] + '</option>'; }).join('') + '</select></label></div>' +
+      (p.status === 'done' ? '<div class="row">' + stars(p) + '<input type="text" class="ctl" data-ch="preview" data-kind="' + kind + '" data-id="' + p.id + '" placeholder="心得（可不填）" value="' + esc(p.review) + '" style="flex:1;min-width:140px"></div>' : '') +
+      '</article>';
+  }
+
+  function vList(kind) {
+    var isFood = kind === 'food', arr = isFood ? S.foods : S.places, f = isFood ? S.ui.ff : S.ui.pf;
+    var shown = arr.filter(function (p) { return f === 'all' || p.status === f; });
+    var chips = ['all'].concat(Object.keys(STAT)).map(function (k) {
+      var n = k === 'all' ? arr.length : arr.filter(function (p) { return p.status === k; }).length;
+      return '<button class="chip" type="button" data-act="filter" data-kind="' + kind + '" data-v="' + k + '" aria-pressed="' + (k === f) + '">' + (k === 'all' ? '全部' : STAT[k]) + ' ' + n + '</button>';
+    }).join('');
+    var extra = isFood ?
+      '<label class="fl">招牌菜<input type="text" name="dish"></label><label class="fl">價位<input type="text" name="price" placeholder="例：₩10,000"></label>' :
+      '<label class="fl">門票價<input type="text" name="ticket" placeholder="例：₩19,000"></label><label class="fl">預估停留時間<input type="text" name="stay" placeholder="例：1–1.5 小時"></label>';
+    return '<div class="chips">' + chips + '</div>' +
+      (shown.length ? shown.map(function (p) { return listItem(p, kind); }).join('') : '<div class="card empty">這個狀態還沒有項目</div>') +
+      '<details class="add edit-only"><summary>' + ic('plus') + '新增' + (isFood ? '餐廳' : '景點') + '</summary><form class="f" data-form="' + kind + '">' +
+      '<label class="fl">中文名稱<input type="text" name="zh" required></label><label class="fl">韓文名稱<input type="text" name="ko" required></label>' +
+      '<label class="fl">搜尋關鍵字（可選，不填用韓文名稱）<input type="text" name="kw"></label><label class="fl">所在區域<input type="text" name="area"></label>' +
+      '<label class="fl">營業時間、公休' + (isFood ? '、最後點餐' : '') + '<input type="text" name="hours"></label>' + extra +
+      '<label class="fl">優先度<select name="prio"><option value="want">想去</option><option value="must">必去</option><option value="alt">備選</option></select></label>' +
+      '<label class="fl full">備註<textarea name="note"></textarea></label>' +
+      '<div class="full row"><button class="btn pri" type="submit">' + ic('save') + '儲存到候選</button></div></form></details>';
+  }
+
+  function vMoney() {
+    var sm = sums(), total = sm.paid + sm.est || 1;
+    var COLORS = ['var(--coral)', 'var(--sun)', 'var(--mint)', 'var(--sky)', 'var(--pink)', '#35c4d9'];
+    function bars(obj) {
+      return Object.keys(obj).sort(function (a, b) { return obj[b] - obj[a]; }).map(function (k, i) {
+        return '<div class="bar-row"><span>' + esc(k) + '</span><div class="bar"><i style="width:' + Math.max(3, obj[k] / total * 100) + '%;--c:' + COLORS[i % COLORS.length] + '"></i></div><span class="num">' + nt(obj[k]) + '</span></div>';
+      }).join('');
+    }
+    var curTxt = Object.keys(sm.cur).map(function (c) { return c + ' ' + Math.round(sm.cur[c]).toLocaleString('en-US'); }).join(' · ');
+    var list = S.expenses.slice().reverse().map(function (e) {
+      var inv = MEM.inv[e.id];
+      return '<div class="exp"><div><div style="font-weight:900;font-size:14px">' + esc(e.name) + (e.sample ? ' <span class="pill">範例</span>' : '') + '</div>' +
+        '<div class="row" style="margin-top:4px"><span class="pill pri">' + esc(e.cat) + '</span><span class="pill pink">' + esc(e.pay) + '</span>' +
+        '<span class="pill ' + (e.status === 'paid' ? 'ok' : 'warn') + '">' + (e.status === 'paid' ? '已付' : '預估') + '</span>' +
+        (e.tax === 'pending' ? '<span class="pill bad">未退稅</span>' : '') + '</div>' +
+        (inv ? '<div class="thumbs"><img class="thumb" src="' + inv + '" alt="發票" data-act="zoomimg" data-src="inv:' + e.id + '"></div>' : '') + '</div>' +
+        '<div class="amt">' + nt(twd(e)) + (e.cur !== 'TWD' ? '<div class="orig">' + e.cur + ' ' + e.amt.toLocaleString('en-US') + '</div>' : '') +
+        '<button class="btn sm ghost edit-only" data-act="delexp" data-id="' + e.id + '">刪除</button></div></div>';
+    }).join('');
+    return '<section class="card"><div class="card-h"><h2>花費總覽</h2><span class="hint">換算成台幣</span></div><div class="stats">' +
+      '<div class="stat"><div class="l">已付</div><div class="v">' + nt(sm.paid) + '</div></div>' +
+      '<div class="stat"><div class="l">預估</div><div class="v">' + nt(sm.est) + '</div></div>' +
+      '<div class="stat"><div class="l">合計</div><div class="v">' + nt(sm.paid + sm.est) + '</div></div>' +
+      '<div class="stat"><div class="l">未退稅</div><div class="v">' + nt(sm.unref) + '</div></div></div>' +
+      '<div class="small muted" style="margin-top:10px">原幣別合計：' + esc(curTxt) + '</div></section>' +
+      '<section class="card"><div class="card-h"><h2>依類別</h2></div>' + bars(sm.cat) + '<div class="card-h" style="margin-top:16px"><h2>依付款方式</h2></div>' + bars(sm.pay) + '</section>' +
+      '<section class="card"><div class="card-h"><h2>明細</h2><span class="hint">' + S.expenses.length + ' 筆</span></div>' + list + '</section>' +
+      '<details class="add edit-only"><summary>' + ic('plus') + '新增費用</summary><form class="f" data-form="exp">' +
+      '<label class="fl full">項目<input type="text" name="name" required></label>' +
+      '<label class="fl">金額<input type="number" name="amt" inputmode="decimal" step="any" min="0" required></label>' +
+      '<label class="fl">幣別<select name="cur"><option>KRW</option><option>TWD</option><option>CNY</option></select></label>' +
+      '<label class="fl">類別<select name="cat">' + CATS.map(function (c) { return '<option>' + c + '</option>'; }).join('') + '</select></label>' +
+      '<label class="fl">付款方式<select name="pay">' + PAYS.map(function (c) { return '<option>' + c + '</option>'; }).join('') + '</select></label>' +
+      '<label class="fl full" id="payOtherWrap" hidden>其他付款方式（手動輸入）<input type="text" name="payOther" placeholder="例：Apple Pay、T-money"></label>' +
+      '<label class="fl">付款狀態<select name="status"><option value="paid" selected>已付</option><option value="est">預估</option></select></label>' +
+      '<label class="fl">退稅狀態<select name="tax"><option value="done" selected>已退稅（或不需退稅）</option><option value="pending">未退稅</option></select></label>' +
+      '<label class="fl full">發票圖片（可選）<input type="file" name="inv" accept="image/*"></label>' +
+      '<div class="full row"><button class="btn pri" type="submit">' + ic('save') + '儲存</button><button class="btn" type="button" disabled title="雛型未啟用">辨識填入（正式版）</button></div></form>' +
+      '<div class="small muted" style="padding:0 14px 8px">匯率（1 外幣 = ? 台幣，可手動更新）</div><div class="rates" style="padding:0 14px 14px">' +
+      ['KRW', 'CNY'].map(function (c) { return '<label class="fl">' + c + '<input type="number" step="any" min="0" class="ctl" data-ch="rate" data-c="' + c + '" value="' + S.rates[c] + '"></label>'; }).join('') + '</div></details>' +
+      '<div class="foot">雛型的發票圖片只暫存在這次開啟，重新整理後會消失；正式版才會保存。</div>';
+  }
+
+  function dueInfo(c) {
+    if (!c.due || c.done) return c.due ? '<span class="small muted">' + c.due.slice(5).replace('-', '/') + '</span>' : '';
+    var diff = Math.round((new Date(c.due) - new Date(todayIso())) / 86400000);
+    var md = c.due.slice(5).replace('-', '/');
+    if (diff < 0) return '<span class="pill bad">已逾期 ' + md + '</span>';
+    if (diff <= 2) return '<span class="pill warn">' + (diff === 0 ? '今天' : diff + ' 天內') + '到期 ' + md + '</span>';
+    return '<span class="small muted">' + md + ' 前</span>';
+  }
+
+  function vCheck() {
+    var cats = [];
+    S.checks.forEach(function (c) { if (cats.indexOf(c.cat) < 0) cats.push(c.cat); });
+    var done = S.checks.filter(function (c) { return c.done; }).length;
+    return '<section class="card"><div class="spread"><h2 style="font-size:16px;font-weight:900">完成進度</h2><span class="num" style="font-weight:700;font-size:20px">' + done + ' / ' + S.checks.length + '</span></div></section>' +
+      cats.map(function (cat) {
+        return '<section class="card"><div class="card-h"><h2>' + esc(cat) + '</h2></div>' +
+          S.checks.filter(function (c) { return c.cat === cat; }).sort(function (a, b) { return (a.done - b.done) || (a.due || '9').localeCompare(b.due || '9'); }).map(function (c) {
+            return '<div class="ck' + (c.done ? ' done' : '') + '"><input type="checkbox" class="chk ctl" data-ch="ck" data-id="' + c.id + '"' + (c.done ? ' checked' : '') + ' aria-label="完成"><div class="ck-t">' + esc(c.text) + '</div><div>' + dueInfo(c) + '</div></div>';
+          }).join('') + '</section>';
+      }).join('') +
+      '<details class="add edit-only"><summary>' + ic('plus') + '新增檢查事項</summary><form class="f" data-form="ck">' +
+      '<label class="fl full">事項<input type="text" name="text" required></label>' +
+      '<label class="fl">類別<input type="text" name="cat" list="catlist" value="預約訂位" required><datalist id="catlist">' + cats.map(function (c) { return '<option value="' + esc(c) + '">'; }).join('') + '</datalist></label>' +
+      '<label class="fl">截止日期（可不填）<input type="text" name="due" placeholder="2026-10-08"></label>' +
+      '<div class="full row"><button class="btn pri" type="submit">' + ic('save') + '儲存</button></div></form></details>';
+  }
+
+  function vPhrase() {
+    var cats = ['all'];
+    S.phrases.forEach(function (p) { if (cats.indexOf(p.cat) < 0) cats.push(p.cat); });
+    var f = S.ui.phc;
+    return '<div class="chips">' + cats.map(function (c) { return '<button class="chip" type="button" data-act="phcat" data-v="' + esc(c) + '" aria-pressed="' + (c === f) + '">' + (c === 'all' ? '全部' : esc(c)) + '</button>'; }).join('') + '</div>' +
+      S.phrases.filter(function (p) { return f === 'all' || p.cat === f; }).map(function (p) {
+        return '<section class="card ph"><div><div class="zh muted">' + esc(p.zh) + '</div><div class="kr">' + esc(p.ko) + '</div>' + (p.rm ? '<div class="rm">' + esc(p.rm) + '</div>' : '') +
+          '<div class="row" style="margin-top:8px"><button class="btn sm" data-act="zoomph" data-id="' + p.id + '">' + ic('expand') + '放大給對方看</button><button class="btn sm ghost edit-only" data-act="delph" data-id="' + p.id + '">刪除</button></div></div>' +
+          '<button class="spk" type="button" data-act="speak" data-id="' + p.id + '" aria-label="播放韓文發音：' + esc(p.zh) + '">' + ic('speaker') + '</button></section>';
+      }).join('') +
+      '<details class="add edit-only"><summary>' + ic('plus') + '新增語句</summary><form class="f" data-form="ph">' +
+      '<label class="fl">中文<input type="text" name="zh" required></label><label class="fl">韓文（會用來朗讀）<input type="text" name="ko" required></label>' +
+      '<label class="fl">羅馬拼音（可不填）<input type="text" name="rm"></label>' +
+      '<label class="fl">分類<input type="text" name="cat" value="點餐" required></label>' +
+      '<div class="full row"><button class="btn pri" type="submit">' + ic('save') + '儲存</button></div></form></details>' +
+      '<div class="foot">喇叭使用手機內建的韓文語音朗讀，沒有聲音時請確認音量與靜音設定。</div>';
+  }
+
+  /* ---------- render ---------- */
+  function renderTabs() {
+    $('tabs').innerHTML = TABS.map(function (t) {
+      return '<button class="tab" role="tab" type="button" data-tab="' + t[0] + '" style="--tc:' + t[3] + '" aria-selected="' + (S.ui.tab === t[0]) + '">' + ic(t[2]) + '<span>' + t[1] + '</span></button>';
+    }).join('');
+  }
+  function renderMode() {
+    var b = $('modeBtn');
+    b.disabled = !CANWRITE;
+    b.setAttribute('aria-pressed', String(S.ui.edit));
+    b.innerHTML = ic(S.ui.edit ? 'edit' : 'lock') + (!CANWRITE ? '唯讀（同行者）' : S.ui.edit ? '編輯模式' : '預覽唯讀');
+    $('shell').classList.toggle('readonly', !S.ui.edit);
+  }
+  function render() {
+    S.ui.edit = PREF && CANWRITE; dirty = false;
+    var v = $('view'), cur = TABS.filter(function (t) { return t[0] === S.ui.tab; })[0];
+    v.style.setProperty('--tabc', cur[3]);
+    if (!READY) { v.innerHTML = '<section class="card empty">載入中…</section>'; }
+    else if (SYNC === 'cloud' && COLS.every(function (c) { return !S[c].length; })) {
+      v.innerHTML = '<section class="card empty">雲端資料庫目前是空的。<br>' + (CANWRITE ? '請讓 Claude 匯入範例行程，或直接在各頁簽新增資料。' : '等主人建立行程後，這裡會即時出現內容。') + '</section>' + (S.ui.tab === 'overview' ? syncFoot() : '');
+    } else {
+      var fn = { overview: vOverview, route: vRoute, spot: function () { return vList('spot'); }, food: function () { return vList('food'); }, money: vMoney, check: vCheck, phrase: vPhrase }[S.ui.tab];
+      v.innerHTML = fn();
+    }
+    renderTabs(); renderMode();
+  }
+  /* re-render caused by someone else's write; never wipe a form that is being filled in */
+  function softRender() {
+    var a = document.activeElement, v = $('view');
+    var typing = a && v.contains(a) && a.matches('input[type=text],input[type=number],textarea');
+    var open = S.ui.edit && (S.ui.editStop || S.ui.editNote || v.querySelector('details.add[open]'));
+    if (drag || typing || open) { dirty = true; return; }
+    render();
+  }
+  document.addEventListener('focusout', function () { if (dirty) setTimeout(function () { if (dirty) softRender(); }, 250); });
+
+  /* ---------- speech ---------- */
+  function speak(text, btn) {
+    if (!('speechSynthesis' in window)) { toast('這支手機不支援語音朗讀'); return; }
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ko-KR'; u.rate = 0.85;
+    var vs = window.speechSynthesis.getVoices() || [];
+    var ko = vs.filter(function (x) { return x.lang && x.lang.replace('_', '-').toLowerCase().indexOf('ko') === 0; })[0];
+    if (ko) u.voice = ko; else if (vs.length) toast('找不到韓文語音，可能沒有聲音');
+    if (btn) { btn.classList.add('playing'); u.onend = u.onerror = function () { btn.classList.remove('playing'); }; }
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }
+
+  function showOv(html) { $('ovIn').innerHTML = html + '<div><button class="btn" data-act="closeov" type="button">關閉</button></div>'; $('ov').hidden = false; }
+  function readFile(file, cb) { var r = new FileReader(); r.onload = function () { cb(r.result); }; r.readAsDataURL(file); }
+
+  /* ---------- drag to reorder (pointer events, transform-based so the dragged node never leaves the DOM) ---------- */
+  var drag = null, scrollTimer = null;
+  function dragStart(e, grip) {
+    if (!S.ui.edit) return;
+    var li = grip.closest('.stop'), ul = li.parentNode;
+    var items = [].slice.call(ul.children), idx = items.indexOf(li);
+    var sy = window.scrollY;
+    var rects = items.map(function (n) { var r = n.getBoundingClientRect(); return { top: r.top + sy, h: r.height }; });
+    drag = { li: li, items: items, idx: idx, to: idx, startY: e.clientY, sy: sy, rects: rects, lastY: e.clientY, pid: e.pointerId, grip: grip };
+    li.classList.add('dragging');
+    try { grip.setPointerCapture(e.pointerId); } catch (x) {}
+    clearInterval(scrollTimer);
+    scrollTimer = setInterval(function () {
+      if (!drag) return;
+      var y = drag.lastY, vh = window.innerHeight;
+      if (y < 90) window.scrollBy(0, -12); else if (y > vh - 130) window.scrollBy(0, 12); else return;
+      dragMove(null);
+    }, 16);
+  }
+  function dragMove(e) {
+    if (!drag) return;
+    if (e) drag.lastY = e.clientY;
+    var dy = (drag.lastY - drag.startY) + (window.scrollY - drag.sy);
+    var me = drag.rects[drag.idx], gap = 10;
+    drag.li.style.transform = 'translateY(' + dy + 'px)';
+    var center = me.top + me.h / 2 + dy, to = drag.idx, j, mid;
+    for (j = 0; j < drag.idx; j++) { mid = drag.rects[j].top + drag.rects[j].h / 2; if (center < mid) { to = j; break; } }
+    for (j = drag.items.length - 1; j > drag.idx; j--) { mid = drag.rects[j].top + drag.rects[j].h / 2; if (center > mid) { to = j; break; } }
+    drag.to = to;
+    drag.items.forEach(function (n, k) {
+      if (k === drag.idx) return;
+      var sh = 0;
+      if (drag.idx < to && k > drag.idx && k <= to) sh = -(me.h + gap);
+      if (drag.idx > to && k < drag.idx && k >= to) sh = me.h + gap;
+      n.style.transform = sh ? 'translateY(' + sh + 'px)' : '';
+    });
+  }
+  function dragEnd() {
+    if (!drag) return;
+    clearInterval(scrollTimer);
+    var d = drag; drag = null;
+    if (d.to !== d.idx) {
+      var ids = d.items.map(function (n) { return n.dataset.id; });
+      var moved = ids.splice(d.idx, 1)[0]; ids.splice(d.to, 0, moved);
+      reorder(S.ui.day, ids); toast('順序已更新');
+    } else { render(); }
+  }
+  document.addEventListener('pointerdown', function (e) {
+    var g = e.target.closest('[data-grip]');
+    if (g) { e.preventDefault(); dragStart(e, g); }
+  });
+  document.addEventListener('pointermove', function (e) { if (drag) { e.preventDefault(); dragMove(e); } }, { passive: false });
+  document.addEventListener('pointerup', dragEnd);
+  document.addEventListener('pointercancel', dragEnd);
+  document.addEventListener('keydown', function (e) {
+    var g = e.target.closest && e.target.closest('[data-grip]');
+    if (!g || !S.ui.edit || (e.key !== 'ArrowUp' && e.key !== 'ArrowDown')) return;
+    e.preventDefault();
+    var list = dayStops(S.ui.day), i = list.findIndex(function (s) { return s.id === g.dataset.grip; }), j = e.key === 'ArrowUp' ? i - 1 : i + 1;
+    if (i < 0 || j < 0 || j >= list.length) return;
+    var t = list[i]; list[i] = list[j]; list[j] = t;
+    reorder(S.ui.day, list.map(function (x) { return x.id; }));
+    var again = document.querySelector('[data-grip="' + g.dataset.grip + '"]'); if (again) again.focus();
+  });
+
+  /* ---------- events ---------- */
+  var EDIT_ACTS = { delstop: 1, delexp: 1, delph: 1, reset: 1, rate: 1, editstop: 1, editnote: 1, savenote: 1, sorttime: 1 };
+  var EDIT_CH = { done: 1, att: 1, pstatus: 1, pprio: 1, preview: 1, ck: 1, rate: 1 };
+
+  document.addEventListener('click', function (e) {
+    var tb = e.target.closest('[data-tab]');
+    if (tb) { S.ui.tab = tb.dataset.tab; S.ui.editStop = ''; S.ui.editNote = ''; uiCommit(); window.scrollTo(0, 0); return; }
+    if (e.target.closest('#modeBtn')) {
+      if (!CANWRITE) return;
+      PREF = !PREF; S.ui.editStop = ''; S.ui.editNote = ''; uiCommit();
+      toast(PREF ? '編輯模式' : '預覽唯讀：同行者看到的畫面'); return;
+    }
+    var t = e.target.closest('[data-act]');
+    if (!t) { if (e.target === $('ov')) $('ov').hidden = true; return; }
+    var a = t.dataset.act, id = t.dataset.id;
+    if (EDIT_ACTS[a] && !S.ui.edit) return;
+    if (a === 'closeov') { $('ov').hidden = true; return; }
+    if (a === 'day') { S.ui.day = Number(t.dataset.i); S.ui.editStop = ''; uiCommit(); }
+    else if (a === 'filter') { S.ui[t.dataset.kind === 'food' ? 'ff' : 'pf'] = t.dataset.v; uiCommit(); }
+    else if (a === 'phcat') { S.ui.phc = t.dataset.v; uiCommit(); }
+    else if (a === 'delstop') { del('stops', id); }
+    else if (a === 'delexp') { del('expenses', id); }
+    else if (a === 'delph') { del('phrases', id); }
+    else if (a === 'editstop') { S.ui.editStop = id; render(); var f = document.querySelector('form[data-id="' + id + '"] input[name=time]'); if (f) f.focus(); }
+    else if (a === 'editnote') { S.ui.editNote = id; render(); var ta = $('nt-' + id); if (ta) ta.focus(); }
+    else if (a === 'canceledit') { S.ui.editStop = ''; S.ui.editNote = ''; render(); }
+    else if (a === 'savenote') {
+      var ta2 = $('nt-' + id);
+      if (ta2) { S.ui.editNote = ''; patch(t.dataset.kind === 'food' ? 'foods' : 'places', id, { note: ta2.value.trim() }).then(function () { render(); toast('備註已儲存'); }); }
+    }
+    else if (a === 'sorttime') {
+      var l = dayStops(S.ui.day).slice().sort(function (x, y) { return x.time.slice(0, 5).localeCompare(y.time.slice(0, 5)); });
+      reorder(S.ui.day, l.map(function (x) { return x.id; })); toast('已依時間排序');
+    }
+    else if (a === 'rate') { var p = find(S.places, id) || find(S.foods, id); if (p) patch(collOf(id), id, { rating: (p.rating === Number(t.dataset.n)) ? 0 : Number(t.dataset.n) }); }
+    else if (a === 'speak') { var ph = find(S.phrases, id); if (ph) speak(ph.ko, t); }
+    else if (a === 'zoomph') { var q = find(S.phrases, id); if (q) showOv('<div class="ov-kr">' + esc(q.ko) + '</div><div class="ov-zh">' + esc(q.zh) + '</div>'); }
+    else if (a === 'zoomimg') {
+      var k = t.dataset.src.split(':'), src = k[0] === 'inv' ? MEM.inv[k[1]] : (MEM.att[k[0]] || [])[Number(k[1])];
+      if (src) showOv('<img src="' + src + '" alt="附件放大">');
+    }
+    else if (a === 'reset' && !CLOUD) { var d0 = withOrd(seed()); loadInto(d0); MEM = { att: {}, inv: {} }; saveLocal(); render(); toast('已重設為範例資料'); }
+  });
+
+  document.addEventListener('change', function (e) {
+    var t = e.target;
+    if (t.id === 'sim') { S.ui.sim = t.value; uiCommit(); return; }
+    if (t.name === 'pay' && t.form) { var w = $('payOtherWrap'); if (w) w.hidden = t.value !== '其他'; return; }
+    var c = t.dataset.ch; if (!c) return;
+    if (EDIT_CH[c] && !S.ui.edit) { render(); return; }
+    var id = t.dataset.id;
+    if (c === 'done') patch('stops', id, { done: t.checked });
+    else if (c === 'ck') patch('checks', id, { done: t.checked });
+    else if (c === 'pstatus') patch(t.dataset.kind === 'food' ? 'foods' : 'places', id, { status: t.value });
+    else if (c === 'pprio') patch(t.dataset.kind === 'food' ? 'foods' : 'places', id, { prio: t.value });
+    else if (c === 'preview') patch(t.dataset.kind === 'food' ? 'foods' : 'places', id, { review: t.value });
+    else if (c === 'rate') { var v = parseFloat(t.value); if (v > 0) setRate(t.dataset.c, v).then(function () { toast('匯率已更新'); }); }
+    else if (c === 'att') {
+      var f = t.files && t.files[0]; if (!f) return;
+      readFile(f, function (u) { (MEM.att[id] = MEM.att[id] || []).push(u); render(); toast('已加入附件（暫存，重新整理後消失）'); });
+    }
+  });
+
+  document.addEventListener('submit', function (e) {
+    var form = e.target.closest('form[data-form]'); if (!form) return;
+    e.preventDefault();
+    if (!S.ui.edit) return;
+    var k = form.dataset.form, fd = new FormData(form), g = function (n) { return (fd.get(n) || '').toString().trim(); };
+    var fin = function (msg) { return function () { render(); toast(msg); }; };
+    var nextOrd = function (d) { return dayStops(d).reduce(function (m, s) { return Math.max(m, s.ord || 0); }, -1) + 1; };
+    if (k === 'stop') {
+      put('stops', { id: uid(), day: S.ui.day, time: g('time'), title: g('title'), kw: g('kw'), tr: g('tr'), rsv: g('rsv'), note: g('note'), done: false, ord: nextOrd(S.ui.day) }).then(fin('已儲存'));
+    } else if (k === 'editstop') {
+      var s = find(S.stops, form.dataset.id); if (!s) return;
+      var nd = Number(g('day')), f = { time: g('time'), title: g('title'), kw: g('kw'), tr: g('tr'), rsv: g('rsv'), note: g('note'), day: nd };
+      if (nd !== s.day) f.ord = nextOrd(nd);
+      S.ui.editStop = '';
+      patch('stops', s.id, f).then(fin(nd !== s.day ? '已儲存，並移到 ' + DAYS[nd].label : '已儲存'));
+    } else if (k === 'pool') {
+      var p = find(S.places, g('pid')) || find(S.foods, g('pid')); if (!p) return;
+      var pc = collOf(p.id);
+      put('stops', { id: uid(), day: S.ui.day, time: g('time'), title: p.zh, kw: p.kw || p.ko, tr: '', rsv: 'none', note: p.note || '', done: false, ord: nextOrd(S.ui.day) })
+        .then(function () { return patch(pc, p.id, { status: 'sched' }); }).then(fin('已排入 ' + DAYS[S.ui.day].label + '，候選池狀態改為「已排入」'));
+    } else if (k === 'spot' || k === 'food') {
+      var o = { id: uid(), zh: g('zh'), ko: g('ko'), kw: g('kw') || g('ko'), area: g('area'), hours: g('hours'), prio: g('prio'), status: 'cand', rating: 0, note: g('note'), review: '', ord: Date.now() };
+      if (k === 'food') { o.dish = g('dish'); o.price = g('price'); } else { o.ticket = g('ticket'); o.stay = g('stay'); }
+      put(k === 'food' ? 'foods' : 'places', o).then(fin('已儲存'));
+    } else if (k === 'exp') {
+      var pay = g('pay') === '其他' ? (g('payOther') || '其他') : g('pay');
+      var ex = { id: uid(), name: g('name'), amt: parseFloat(g('amt')) || 0, cur: g('cur'), cat: g('cat'), pay: pay, status: g('status'), tax: g('tax'), ord: Date.now() };
+      var file = form.querySelector('input[type=file]').files[0];
+      var go = function () { put('expenses', ex).then(fin('已儲存')); };
+      if (file) readFile(file, function (u) { MEM.inv[ex.id] = u; go(); }); else go();
+    } else if (k === 'ck') {
+      put('checks', { id: uid(), cat: g('cat'), text: g('text'), due: g('due'), done: false, ord: Date.now() }).then(fin('已儲存'));
+    } else if (k === 'ph') {
+      put('phrases', { id: uid(), cat: g('cat'), zh: g('zh'), ko: g('ko'), rm: g('rm'), ord: Date.now() }).then(fin('已儲存'));
+    }
+  });
+
+  /* ---------- start-up ---------- */
+  function withOrd(d) { COLS.forEach(function (c) { (d[c] || []).forEach(function (x, i) { if (x.ord === undefined) x.ord = i; }); }); return d; }
+  function startLocal() {
+    SYNC = 'local'; CANWRITE = true; CLOUD = null;
+    var l = rd(LKEY); loadInto(l && l.v === 3 ? withOrd(l) : withOrd(seed()));
+    if (!(l && l.v === 3)) saveLocal();
+    READY = true; render();
+  }
+  function startCloud() {
+    var first = {}, need = COLS.length + 1;
+    var got = function (k) { first[k] = 1; if (!READY && Object.keys(first).length >= need) { READY = true; } if (Object.keys(first).length >= need) SYNC = 'cloud'; };
+    var onErr = function (e) { SYNC = 'error'; READY = true; toast('雲端資料讀取失敗（' + ((e && e.code) || '未知') + '）'); render(); };
+    COLS.forEach(function (c) {
+      CLOUD.collection(c).onSnapshot(function (snap) {
+        S[c] = snap.docs.map(function (d) { var o = Object.assign({}, d.data()); o.id = d.id; return o; }).sort(function (a, b) { return (a.ord || 0) - (b.ord || 0); });
+        got(c); saveCache(); softRender();
+      }, onErr);
+    });
+    CLOUD.doc('meta/settings').onSnapshot(function (snap) {
+      var d = snap.exists ? snap.data() : null;
+      S.rates = Object.assign({}, RATES0, (d && d.rates) || {});
+      got('meta'); saveCache(); softRender();
+    }, onErr);
+    setTimeout(function () { if (!READY) { READY = true; softRender(); } }, 6000);
+  }
+  function init() {
+    render();
+    var cl = window.claude;
+    if (!cl || !cl.use) { startLocal(); return; }
+    cl.use('db').then(function (db) {
+      if (!db) { if (SYNC === 'cache') { /* signed out but has cache: keep read-only cache */ SYNC = 'local'; } startLocal(); return null; }
+      CLOUD = db;
+      return cl.use('user').then(function (u) { USER = u; if (!u) return false; return u.can('data.write').then(function (w) { return w === null ? u.canEdit() : w; }); })
+        .catch(function () { return false; })
+        .then(function (w) { CANWRITE = !!w; startCloud(); render(); });
+    }).catch(function () { startLocal(); });
+  }
+
+  if ('speechSynthesis' in window) { try { window.speechSynthesis.getVoices(); } catch (e) {} }
+  SYNC = 'snapshot'; CANWRITE = false; CLOUD = null; loadInto(SNAP); READY = true;
+  document.querySelector('.hero .sub').insertAdjacentHTML('beforeend', '<br>快照版 · 資料截至 ' + SNAP_AT);
+  render();
+})();
+</script>
+<script>if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script></body></html>
